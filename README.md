@@ -1,20 +1,36 @@
-<<<<<<< HEAD
-# React + Vite
+# Algorithm Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+An interactive learning project for understanding algorithms through step-by-step visualizations.
 
-Currently, two official plugins are available:
+## Planned Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **Sorting Algorithms:** Visualize comparisons and swaps.
+* **Binary Search Tree:** Explore tree operations.
+* **N-Queens:** Understand backtracking.
+* **Predict Mode:** Predict the next algorithm step.
+* **Race Mode:** Compare algorithm execution.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* React
+* JavaScript
+* Vite
+* CSS
 
-## Expanding the Oxlint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-=======
-# alglorithm-visualizer
->>>>>>> 0e92e19651e181a11088d3e4d96a977adaa669b7
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## Project Status
+
+Currently in development. Building the algorithm logic first, followed by visualization and interactive features.
