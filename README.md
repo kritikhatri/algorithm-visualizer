@@ -4,11 +4,11 @@ An interactive learning project for understanding algorithms through step-by-ste
 
 ## Planned Features
 
-* **Sorting Algorithms:** Visualize comparisons and swaps.
-* **Binary Search Tree:** Explore tree operations.
-* **N-Queens:** Understand backtracking.
-* **Predict Mode:** Predict the next algorithm step.
-* **Race Mode:** Compare algorithm execution.
+* Sorting Algorithms: Visualize comparisons and swaps.
+* Binary Search Tree: Explore tree operations.
+* N-Queens: Understand backtracking.
+* Predict Mode: Predict the next algorithm step.
+* Race Mode: Compare algorithm execution.
 
 ## Tech Stack
 
