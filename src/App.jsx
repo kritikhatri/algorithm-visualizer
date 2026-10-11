@@ -34,25 +34,65 @@ function generateBubbleSortSteps(originalArray) {
   return steps
 }
 
+
 function App() {
   const steps = generateBubbleSortSteps([4, 2, 3])
+  const [currentStep, setCurrentStep] = useState(0)
+
+  const step = steps[currentStep]
+
+  function handleNext() {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  function handlePrevious() {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
 
   return (
-    <div>
+    <div className="visualizer">
       <h1>Algorithm Visualizer</h1>
-      <h2>Bubble Sort</h2>
+      <p className="subtitle">Learn Bubble Sort, one step at a time.</p>
 
-      <p>Total recorded steps: {steps.length}</p>
+      <div className="array-container">
+        {step.array.map((value, index) => {
+          const isCompared = step.indices.includes(index)
 
-      <h3>Recorded Steps</h3>
+          return (
+            <div className="bar-wrapper" key={index}>
+              <div
+                className={`bar ${isCompared ? "highlight" : ""}`}
+                style={{ height: `${value * 35}px` }}
+              >
+                {value}
+              </div>
+              <span>Index {index}</span>
+            </div>
+          )
+        })}
+      </div>
 
-      {steps.map((step, index) => (
-        <div key={index}>
-          <strong>Step {index + 1}: {step.type}</strong>
-          <p>Indices: {step.indices.join(", ") || "None"}</p>
-          <p>Array: [{step.array.join(", ")}]</p>
-        </div>
-      ))}
+      <div className="step-info">
+        <h2>Action: {step.type}</h2>
+        <p>Step {currentStep + 1} of {steps.length}</p>
+        <p>Array: [{step.array.join(", ")}]</p>
+      </div>
+
+      <div className="controls">
+        <button onClick={handlePrevious} disabled={currentStep === 0}>
+          ← Previous
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={currentStep === steps.length - 1}
+        >
+          Next →
+        </button>
+      </div>
     </div>
   )
 }
