@@ -35,28 +35,59 @@ function generateBubbleSortSteps(originalArray) {
 }
 
 
+
 function App() {
   const steps = generateBubbleSortSteps([4, 2, 3])
+
   const [currentStep, setCurrentStep] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   const step = steps[currentStep]
 
+  useEffect(() => {
+    if (!isPlaying) return
+
+    const timer = setInterval(() => {
+      setCurrentStep((previousStep) => {
+        if (previousStep >= steps.length - 1) {
+          setIsPlaying(false)
+          return previousStep
+        }
+
+        return previousStep + 1
+      })
+    }, 800)
+
+    return () => clearInterval(timer)
+  }, [isPlaying, steps.length])
+
   function handleNext() {
+    setIsPlaying(false)
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
   }
 
   function handlePrevious() {
+    setIsPlaying(false)
+
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
     }
   }
 
+  function handleReset() {
+    setIsPlaying(false)
+    setCurrentStep(0)
+  }
+
   return (
     <div className="visualizer">
       <h1>Algorithm Visualizer</h1>
-      <p className="subtitle">Learn Bubble Sort, one step at a time.</p>
+      <p className="subtitle">
+        Learn Bubble Sort, one step at a time.
+      </p>
 
       <div className="array-container">
         {step.array.map((value, index) => {
@@ -65,7 +96,7 @@ function App() {
           return (
             <div className="bar-wrapper" key={index}>
               <div
-                className={`bar ${isCompared ? "highlight" : ""}`}
+                className={`bar ${isCompared ? 'highlight' : ''}`}
                 style={{ height: `${value * 35}px` }}
               >
                 {value}
@@ -79,13 +110,25 @@ function App() {
       <div className="step-info">
         <h2>Action: {step.type}</h2>
         <p>Step {currentStep + 1} of {steps.length}</p>
-        <p>Array: [{step.array.join(", ")}]</p>
+        <p>Array: [{step.array.join(', ')}]</p>
       </div>
 
       <div className="controls">
-        <button onClick={handlePrevious} disabled={currentStep === 0}>
+        <button
+          onClick={handlePrevious}
+          disabled={currentStep === 0}
+        >
           ← Previous
         </button>
+
+        <button onClick={() => setIsPlaying(!isPlaying)}>
+          {isPlaying ? '⏸ Pause' : '▶ Play'}
+        </button>
+
+        <button onClick={handleReset}>
+          ↺ Reset
+        </button>
+
         <button
           onClick={handleNext}
           disabled={currentStep === steps.length - 1}
@@ -96,5 +139,6 @@ function App() {
     </div>
   )
 }
+
 
 export default App
