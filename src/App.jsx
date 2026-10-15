@@ -2,49 +2,81 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-function generateBubbleSortSteps(originalArray) {
+function generateSteps(originalArray, algorithm) {
   const array = [...originalArray]
   const steps = []
 
-  for (let i = 0; i < array.length - 1; i++) {
-    for (let j = 0; j < array.length - 1 - i; j++) {
-      steps.push({
-        type: 'compare',
-        indices: [j, j + 1],
-        array: [...array],
-      })
+  function record(type, indices = []) {
+    steps.push({
+      type,
+      indices,
+      array: [...array],
+    })
+  }
 
-      if (array[j] > array[j + 1]) {
-        const temp = array[j]
-        array[j] = array[j + 1]
-        array[j + 1] = temp
+  record('start')
 
-        steps.push({
-          type: 'swap',
-          indices: [j, j + 1],
-          array: [...array],
-        })
+  if (algorithm === 'Bubble Sort') {
+    for (let i = 0; i < array.length - 1; i++) {
+      for (let j = 0; j < array.length - 1 - i; j++) {
+        record('compare', [j, j + 1])
+
+        if (array[j] > array[j + 1]) {
+          ;[array[j], array[j + 1]] = [array[j + 1], array[j]]
+          record('swap', [j, j + 1])
+        }
       }
+    }
+  } else if (algorithm === 'Selection Sort') {
+    for (let i = 0; i < array.length - 1; i++) {
+      let minIndex = i
+
+      for (let j = i + 1; j < array.length; j++) {
+        record('compare', [minIndex, j])
+
+        if (array[j] < array[minIndex]) {
+          minIndex = j
+          record('new minimum', [i, minIndex])
+        }
+      }
+
+      if (minIndex !== i) {
+        ;[array[i], array[minIndex]] = [array[minIndex], array[i]]
+        record('swap', [i, minIndex])
+      }
+    }
+  } else if (algorithm === 'Insertion Sort') {
+    for (let i = 1; i < array.length; i++) {
+      const current = array[i]
+      let j = i - 1
+
+      record('select', [i])
+
+      while (j >= 0 && array[j] > current) {
+        record('compare', [j, j + 1])
+        array[j + 1] = array[j]
+        record('shift', [j, j + 1])
+        j--
+      }
+
+      array[j + 1] = current
+      record('insert', [j + 1])
     }
   }
 
-  steps.push({
-    type: 'done',
-    indices: [],
-    array: [...array],
-  })
-
+  record('done')
   return steps
 }
 
 function App() {
   const [input, setInput] = useState('4, 2, 3')
   const [array, setArray] = useState([4, 2, 3])
+  const [algorithm, setAlgorithm] = useState('Bubble Sort')
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [error, setError] = useState('')
 
-  const steps = generateBubbleSortSteps(array)
+  const steps = generateSteps(array, algorithm)
   const step = steps[currentStep]
 
   useEffect(() => {
@@ -89,9 +121,14 @@ function App() {
     setError('')
   }
 
+  function handleAlgorithmChange(event) {
+    setAlgorithm(event.target.value)
+    setIsPlaying(false)
+    setCurrentStep(0)
+  }
+
   function handleNext() {
     setIsPlaying(false)
-
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
@@ -99,7 +136,6 @@ function App() {
 
   function handlePrevious() {
     setIsPlaying(false)
-
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
     }
@@ -127,12 +163,10 @@ function App() {
           <div className="input-row">
             <input
               id="array-input"
-              type="text"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               placeholder="e.g. 8, 3, 6, 1, 5"
             />
-
             <button className="primary-button" type="submit">
               Visualize
             </button>
@@ -145,12 +179,24 @@ function App() {
           {error && <p className="error-message">{error}</p>}
         </form>
 
+        <div className="algorithm-selector">
+          <label htmlFor="algorithm">Choose algorithm</label>
+          <select
+            id="algorithm"
+            value={algorithm}
+            onChange={handleAlgorithmChange}
+          >
+            <option>Bubble Sort</option>
+            <option>Selection Sort</option>
+            <option>Insertion Sort</option>
+          </select>
+        </div>
+
         <div className="section-heading">
           <div>
             <p className="eyebrow">CURRENT ALGORITHM</p>
-            <h2>Bubble Sort</h2>
+            <h2>{algorithm}</h2>
           </div>
-
           <span className="step-badge">
             Step {currentStep + 1} / {steps.length}
           </span>
@@ -167,12 +213,14 @@ function App() {
                     step.type === 'done' ? 'sorted' : ''
                   }`}
                   style={{
-                    height: `${Math.max(35, Math.min(220, Math.abs(value) * 18 + 35))}px`,
+                    height: `${Math.max(
+                      35,
+                      Math.min(220, Math.abs(value) * 18 + 35)
+                    )}px`,
                   }}
                 >
                   <span>{value}</span>
                 </div>
-
                 <span className="index-label">Index {index}</span>
               </div>
             )
@@ -180,7 +228,7 @@ function App() {
         </div>
 
         <div className="step-info">
-          <span className={`action-label action-${step.type}`}>
+          <span className={`action-label action-${step.type.replace(' ', '-')}`}>
             {step.type === 'done' ? '✓ Sorting complete' : `Action: ${step.type}`}
           </span>
 
