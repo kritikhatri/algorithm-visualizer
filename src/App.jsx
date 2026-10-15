@@ -1,4 +1,7 @@
 
+import { useEffect, useState } from 'react'
+import './App.css'
+
 function generateBubbleSortSteps(originalArray) {
   const array = [...originalArray]
   const steps = []
@@ -6,7 +9,7 @@ function generateBubbleSortSteps(originalArray) {
   for (let i = 0; i < array.length - 1; i++) {
     for (let j = 0; j < array.length - 1 - i; j++) {
       steps.push({
-        type: "compare",
+        type: 'compare',
         indices: [j, j + 1],
         array: [...array],
       })
@@ -17,7 +20,7 @@ function generateBubbleSortSteps(originalArray) {
         array[j + 1] = temp
 
         steps.push({
-          type: "swap",
+          type: 'swap',
           indices: [j, j + 1],
           array: [...array],
         })
@@ -26,7 +29,7 @@ function generateBubbleSortSteps(originalArray) {
   }
 
   steps.push({
-    type: "done",
+    type: 'done',
     indices: [],
     array: [...array],
   })
@@ -34,14 +37,14 @@ function generateBubbleSortSteps(originalArray) {
   return steps
 }
 
-
-
 function App() {
-  const steps = generateBubbleSortSteps([4, 2, 3])
-
+  const [input, setInput] = useState('4, 2, 3')
+  const [array, setArray] = useState([4, 2, 3])
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [error, setError] = useState('')
 
+  const steps = generateBubbleSortSteps(array)
   const step = steps[currentStep]
 
   useEffect(() => {
@@ -60,6 +63,31 @@ function App() {
 
     return () => clearInterval(timer)
   }, [isPlaying, steps.length])
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    const values = input.split(',').map((value) => value.trim())
+
+    if (
+      values.length < 1 ||
+      values.length > 12 ||
+      values.some(
+        (value) =>
+          value === '' ||
+          !Number.isFinite(Number(value)) ||
+          !Number.isInteger(Number(value))
+      )
+    ) {
+      setError('Enter 1–12 whole numbers separated by commas.')
+      return
+    }
+
+    setIsPlaying(false)
+    setArray(values.map(Number))
+    setCurrentStep(0)
+    setError('')
+  }
 
   function handleNext() {
     setIsPlaying(false)
@@ -83,62 +111,135 @@ function App() {
   }
 
   return (
-    <div className="visualizer">
-      <h1>Algorithm Visualizer</h1>
-      <p className="subtitle">
-        Learn Bubble Sort, one step at a time.
-      </p>
+    <main className="visualizer">
+      <header className="page-header">
+        <p className="eyebrow">LEARN • VISUALIZE • UNDERSTAND</p>
+        <h1>Algorithm Visualizer</h1>
+        <p className="subtitle">
+          Watch sorting algorithms come to life, one step at a time.
+        </p>
+      </header>
 
-      <div className="array-container">
-        {step.array.map((value, index) => {
-          const isCompared = step.indices.includes(index)
+      <section className="panel">
+        <form className="input-section" onSubmit={handleSubmit}>
+          <label htmlFor="array-input">Your array</label>
 
-          return (
-            <div className="bar-wrapper" key={index}>
-              <div
-                className={`bar ${isCompared ? 'highlight' : ''}`}
-                style={{ height: `${value * 35}px` }}
-              >
-                {value}
+          <div className="input-row">
+            <input
+              id="array-input"
+              type="text"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              placeholder="e.g. 8, 3, 6, 1, 5"
+            />
+
+            <button className="primary-button" type="submit">
+              Visualize
+            </button>
+          </div>
+
+          <p className="helper-text">
+            Enter up to 12 whole numbers separated by commas.
+          </p>
+
+          {error && <p className="error-message">{error}</p>}
+        </form>
+
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">CURRENT ALGORITHM</p>
+            <h2>Bubble Sort</h2>
+          </div>
+
+          <span className="step-badge">
+            Step {currentStep + 1} / {steps.length}
+          </span>
+        </div>
+
+        <div className="array-container">
+          {step.array.map((value, index) => {
+            const isCompared = step.indices.includes(index)
+
+            return (
+              <div className="bar-wrapper" key={index}>
+                <div
+                  className={`bar ${isCompared ? 'highlight' : ''} ${
+                    step.type === 'done' ? 'sorted' : ''
+                  }`}
+                  style={{
+                    height: `${Math.max(35, Math.min(220, Math.abs(value) * 18 + 35))}px`,
+                  }}
+                >
+                  <span>{value}</span>
+                </div>
+
+                <span className="index-label">Index {index}</span>
               </div>
-              <span>Index {index}</span>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
 
-      <div className="step-info">
-        <h2>Action: {step.type}</h2>
-        <p>Step {currentStep + 1} of {steps.length}</p>
-        <p>Array: [{step.array.join(', ')}]</p>
-      </div>
+        <div className="step-info">
+          <span className={`action-label action-${step.type}`}>
+            {step.type === 'done' ? '✓ Sorting complete' : `Action: ${step.type}`}
+          </span>
 
-      <div className="controls">
-        <button
-          onClick={handlePrevious}
-          disabled={currentStep === 0}
-        >
-          ← Previous
-        </button>
+          <p className="array-readout">
+            Array: [{step.array.join(', ')}]
+          </p>
 
-        <button onClick={() => setIsPlaying(!isPlaying)}>
-          {isPlaying ? '⏸ Pause' : '▶ Play'}
-        </button>
+          <div className="progress-track">
+            <div
+              className="progress-fill"
+              style={{
+                width: `${((currentStep + 1) / steps.length) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
 
-        <button onClick={handleReset}>
-          ↺ Reset
-        </button>
+        <div className="controls">
+          <button
+            className="secondary-button"
+            onClick={handlePrevious}
+            disabled={currentStep === 0}
+          >
+            ← Previous
+          </button>
 
-        <button
-          onClick={handleNext}
-          disabled={currentStep === steps.length - 1}
-        >
-          Next →
-        </button>
-      </div>
-    </div>
+          <button
+            className="primary-button play-button"
+            onClick={() => {
+              if (currentStep === steps.length - 1) {
+                setCurrentStep(0)
+                setIsPlaying(true)
+              } else {
+                setIsPlaying(!isPlaying)
+              }
+            }}
+          >
+            {isPlaying ? 'Ⅱ Pause' : '▶ Play'}
+          </button>
+
+          <button className="secondary-button" onClick={handleReset}>
+            ↺ Reset
+          </button>
+
+          <button
+            className="secondary-button"
+            onClick={handleNext}
+            disabled={currentStep === steps.length - 1}
+          >
+            Next →
+          </button>
+        </div>
+      </section>
+
+      <footer className="page-footer">
+        <p>Made with curiosity and a little bit of pink ✿</p>
+      </footer>
+    </main>
   )
 }
-
 
 export default App
