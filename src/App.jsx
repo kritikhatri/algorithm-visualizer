@@ -78,6 +78,49 @@ function App() {
 
   const steps = generateSteps(array, algorithm)
   const step = steps[currentStep]
+  const completedSteps = steps.slice(0, currentStep + 1)
+
+  const complexity = {
+    'Bubble Sort': {
+      best: 'O(n²)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+      space: 'O(n)',
+      description:
+        'Compares adjacent elements and swaps them when they are out of order.',
+    },
+    'Selection Sort': {
+      best: 'O(n²)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+      space: 'O(n)',
+      description:
+        'Finds the minimum element in the unsorted section and moves it into position.',
+    },
+    'Insertion Sort': {
+      best: 'O(n)',
+      average: 'O(n²)',
+      worst: 'O(n²)',
+      space: 'O(n)',
+      description:
+        'Inserts each element into its correct position in the sorted section.',
+    },
+}
+
+const selectedComplexity = complexity[algorithm]
+
+
+  const comparisons = completedSteps.filter(
+    (item) => item.type === 'compare'
+  ).length
+
+  const swaps = completedSteps.filter(
+    (item) => item.type === 'swap'
+  ).length
+
+  const shifts = completedSteps.filter(
+    (item) => item.type === 'shift'
+  ).length
 
   useEffect(() => {
     if (!isPlaying) return
@@ -226,6 +269,27 @@ function App() {
             )
           })}
         </div>
+        <div className="stats-container">
+          <div className="stat-card">
+          <span>Comparisons</span>
+          <strong>{comparisons}</strong>
+        </div>
+
+        <div className="stat-card">
+          <span>Swaps</span>
+          <strong>{swaps}</strong>
+        </div>
+
+        <div className="stat-card">
+          <span>Shifts</span>
+          <strong>{shifts}</strong>
+        </div>
+
+        <div className="stat-card">
+          <span>Array Size</span>
+          <strong>{array.length}</strong>
+        </div>
+      </div>
 
         <div className="step-info">
           <span className={`action-label action-${step.type.replace(' ', '-')}`}>
@@ -282,6 +346,37 @@ function App() {
           </button>
         </div>
       </section>
+
+    <section className="complexity-panel">
+      <p className="eyebrow">ALGORITHM ANALYSIS</p>
+      <h2>Time & Space Complexity</h2>
+      <p className="complexity-description">
+      {selectedComplexity.description}
+      </p>
+
+    <div className="complexity-grid">
+      <div className="complexity-card">
+        <span>Best Case</span>
+        <strong>{selectedComplexity.best}</strong>
+    </div>
+
+    <div className="complexity-card">
+      <span>Average Case</span>
+      <strong>{selectedComplexity.average}</strong>
+    </div>
+
+    <div className="complexity-card">
+      <span>Worst Case</span>
+      <strong>{selectedComplexity.worst}</strong>
+    </div>
+
+    <div className="complexity-card">
+      <span>Space</span>
+      <strong>{selectedComplexity.space}</strong>
+    </div>
+  </div>
+</section>
+
 
       <footer className="page-footer">
         <p>Made with curiosity and a little bit of pink ✿</p>
