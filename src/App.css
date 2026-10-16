@@ -129,3 +129,69 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.api-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 8px 14px;
+  border: 1px solid #f3c6dc;
+  border-radius: 999px;
+  background: #fff0f7;
+  color: #8f3d68;
+  font-size: 13px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-online {
+  background: #22a06b;
+}
+
+.status-checking {
+  background: #e7a33e;
+}
+
+.status-offline {
+  background: #dc5265;
+}
+
+.api-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 8px 14px;
+  border: 1px solid #f3c6dc;
+  border-radius: 999px;
+  background: #fff0f7;
+  color: #8f3d68;
+  font-size: 13px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-online {
+  background: #22a06b;
+}
+
+.status-checking {
+  background: #e7a33e;
+}
+
+.status-offline {
+  background: #dc5265;
+}

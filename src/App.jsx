@@ -76,6 +76,26 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [error, setError] = useState('')
 
+  // Backend connection status
+  const [apiStatus, setApiStatus] = useState('Checking...')
+
+  useEffect(() => {
+    fetch('http://localhost:5001/api/health')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('API request failed')
+        }
+
+        return response.json()
+      })
+      .then((data) => {
+        setApiStatus(data.message)
+      })
+      .catch(() => {
+        setApiStatus('Backend unavailable')
+      })
+  }, [])
+
   const steps = generateSteps(array, algorithm)
   const step = steps[currentStep]
   const completedSteps = steps.slice(0, currentStep + 1)
@@ -105,10 +125,9 @@ function App() {
       description:
         'Inserts each element into its correct position in the sorted section.',
     },
-}
+  }
 
-const selectedComplexity = complexity[algorithm]
-
+  const selectedComplexity = complexity[algorithm]
 
   const comparisons = completedSteps.filter(
     (item) => item.type === 'compare'
@@ -172,6 +191,7 @@ const selectedComplexity = complexity[algorithm]
 
   function handleNext() {
     setIsPlaying(false)
+
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
@@ -179,6 +199,7 @@ const selectedComplexity = complexity[algorithm]
 
   function handlePrevious() {
     setIsPlaying(false)
+
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1)
     }
@@ -193,9 +214,25 @@ const selectedComplexity = complexity[algorithm]
     <main className="visualizer">
       <header className="page-header">
         <p className="eyebrow">LEARN • VISUALIZE • UNDERSTAND</p>
+
         <h1>Algorithm Visualizer</h1>
+
         <p className="subtitle">
           Watch sorting algorithms come to life, one step at a time.
+        </p>
+
+        <p className="api-status" aria-live="polite">
+          <span
+            className={`status-dot ${
+              apiStatus === 'Algorithm Visualizer API is running!'
+                ? 'status-online'
+                : apiStatus === 'Checking...'
+                  ? 'status-checking'
+                  : 'status-offline'
+            }`}
+          />
+
+          Backend: {apiStatus}
         </p>
       </header>
 
@@ -210,6 +247,7 @@ const selectedComplexity = complexity[algorithm]
               onChange={(event) => setInput(event.target.value)}
               placeholder="e.g. 8, 3, 6, 1, 5"
             />
+
             <button className="primary-button" type="submit">
               Visualize
             </button>
@@ -224,6 +262,7 @@ const selectedComplexity = complexity[algorithm]
 
         <div className="algorithm-selector">
           <label htmlFor="algorithm">Choose algorithm</label>
+
           <select
             id="algorithm"
             value={algorithm}
@@ -240,6 +279,7 @@ const selectedComplexity = complexity[algorithm]
             <p className="eyebrow">CURRENT ALGORITHM</p>
             <h2>{algorithm}</h2>
           </div>
+
           <span className="step-badge">
             Step {currentStep + 1} / {steps.length}
           </span>
@@ -264,36 +304,42 @@ const selectedComplexity = complexity[algorithm]
                 >
                   <span>{value}</span>
                 </div>
+
                 <span className="index-label">Index {index}</span>
               </div>
             )
           })}
         </div>
+
         <div className="stats-container">
           <div className="stat-card">
-          <span>Comparisons</span>
-          <strong>{comparisons}</strong>
-        </div>
+            <span>Comparisons</span>
+            <strong>{comparisons}</strong>
+          </div>
 
-        <div className="stat-card">
-          <span>Swaps</span>
-          <strong>{swaps}</strong>
-        </div>
+          <div className="stat-card">
+            <span>Swaps</span>
+            <strong>{swaps}</strong>
+          </div>
 
-        <div className="stat-card">
-          <span>Shifts</span>
-          <strong>{shifts}</strong>
-        </div>
+          <div className="stat-card">
+            <span>Shifts</span>
+            <strong>{shifts}</strong>
+          </div>
 
-        <div className="stat-card">
-          <span>Array Size</span>
-          <strong>{array.length}</strong>
+          <div className="stat-card">
+            <span>Array Size</span>
+            <strong>{array.length}</strong>
+          </div>
         </div>
-      </div>
 
         <div className="step-info">
-          <span className={`action-label action-${step.type.replace(' ', '-')}`}>
-            {step.type === 'done' ? '✓ Sorting complete' : `Action: ${step.type}`}
+          <span
+            className={`action-label action-${step.type.replace(' ', '-')}`}
+          >
+            {step.type === 'done'
+              ? '✓ Sorting complete'
+              : `Action: ${step.type}`}
           </span>
 
           <p className="array-readout">
@@ -347,36 +393,37 @@ const selectedComplexity = complexity[algorithm]
         </div>
       </section>
 
-    <section className="complexity-panel">
-      <p className="eyebrow">ALGORITHM ANALYSIS</p>
-      <h2>Time & Space Complexity</h2>
-      <p className="complexity-description">
-      {selectedComplexity.description}
-      </p>
+      <section className="complexity-panel">
+        <p className="eyebrow">ALGORITHM ANALYSIS</p>
 
-    <div className="complexity-grid">
-      <div className="complexity-card">
-        <span>Best Case</span>
-        <strong>{selectedComplexity.best}</strong>
-    </div>
+        <h2>Time &amp; Space Complexity</h2>
 
-    <div className="complexity-card">
-      <span>Average Case</span>
-      <strong>{selectedComplexity.average}</strong>
-    </div>
+        <p className="complexity-description">
+          {selectedComplexity.description}
+        </p>
 
-    <div className="complexity-card">
-      <span>Worst Case</span>
-      <strong>{selectedComplexity.worst}</strong>
-    </div>
+        <div className="complexity-grid">
+          <div className="complexity-card">
+            <span>Best Case</span>
+            <strong>{selectedComplexity.best}</strong>
+          </div>
 
-    <div className="complexity-card">
-      <span>Space</span>
-      <strong>{selectedComplexity.space}</strong>
-    </div>
-  </div>
-</section>
+          <div className="complexity-card">
+            <span>Average Case</span>
+            <strong>{selectedComplexity.average}</strong>
+          </div>
 
+          <div className="complexity-card">
+            <span>Worst Case</span>
+            <strong>{selectedComplexity.worst}</strong>
+          </div>
+
+          <div className="complexity-card">
+            <span>Space</span>
+            <strong>{selectedComplexity.space}</strong>
+          </div>
+        </div>
+      </section>
 
       <footer className="page-footer">
         <p>Made with curiosity and a little bit of pink ✿</p>
