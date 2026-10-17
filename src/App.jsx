@@ -68,6 +68,73 @@ function generateSteps(originalArray, algorithm) {
   return steps
 }
 
+function generateRandomArray(size = 8) {
+  return Array.from({ length: size }, () =>
+    Math.floor(Math.random() * 90) + 10
+  );
+}
+
+function isValidArray(input) {
+  const values = input.split(",").map((value) => value.trim());
+
+  return (
+    values.length > 0 &&
+    values.every((value) => value !== "" && Number.isFinite(Number(value)))
+  );
+}
+
+const [customInput, setCustomInput] = useState("");
+
+function handleGenerateArray() {
+  setArray(generateRandomArray(8));
+}
+
+function handleResetArray() {
+  setArray([40, 20, 70, 10, 50, 30, 80, 60]);
+}
+
+function handleCustomArray() {
+  if (!isValidArray(customInput)) {
+    alert("Enter valid numbers separated by commas.");
+    return;
+  }
+
+  const values = customInput
+    .split(",")
+    .map((value) => Number(value.trim()));
+
+  if (values.length < 2 || values.length > 20) {
+    alert("Please enter between 2 and 20 numbers.");
+    return;
+  }
+
+  setArray(values);
+}
+
+<div className="array-controls">
+  <button onClick={handleGenerateArray}>
+    Generate Random Array
+  </button>
+
+  <button onClick={handleResetArray}>
+    Reset Array
+  </button>
+
+  <div className="custom-array-input">
+    <input
+      type="text"
+      value={customInput}
+      onChange={(event) => setCustomInput(event.target.value)}
+      placeholder="e.g. 40, 10, 70, 20"
+      aria-label="Enter a custom array"
+    />
+
+    <button onClick={handleCustomArray}>
+      Use Custom Array
+    </button>
+  </div>
+</div>
+
 function App() {
   const [input, setInput] = useState('4, 2, 3')
   const [array, setArray] = useState([4, 2, 3])
