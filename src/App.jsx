@@ -71,81 +71,31 @@ function generateSteps(originalArray, algorithm) {
 function generateRandomArray(size = 8) {
   return Array.from({ length: size }, () =>
     Math.floor(Math.random() * 90) + 10
-  );
+  )
 }
 
 function isValidArray(input) {
-  const values = input.split(",").map((value) => value.trim());
+  const values = input.split(',').map((value) => value.trim())
 
   return (
     values.length > 0 &&
-    values.every((value) => value !== "" && Number.isFinite(Number(value)))
-  );
+    values.every(
+      (value) => value !== '' && Number.isFinite(Number(value))
+    )
+  )
 }
-
-const [customInput, setCustomInput] = useState("");
-
-function handleGenerateArray() {
-  setArray(generateRandomArray(8));
-}
-
-function handleResetArray() {
-  setArray([40, 20, 70, 10, 50, 30, 80, 60]);
-}
-
-function handleCustomArray() {
-  if (!isValidArray(customInput)) {
-    alert("Enter valid numbers separated by commas.");
-    return;
-  }
-
-  const values = customInput
-    .split(",")
-    .map((value) => Number(value.trim()));
-
-  if (values.length < 2 || values.length > 20) {
-    alert("Please enter between 2 and 20 numbers.");
-    return;
-  }
-
-  setArray(values);
-}
-
-<div className="array-controls">
-  <button onClick={handleGenerateArray}>
-    Generate Random Array
-  </button>
-
-  <button onClick={handleResetArray}>
-    Reset Array
-  </button>
-
-  <div className="custom-array-input">
-    <input
-      type="text"
-      value={customInput}
-      onChange={(event) => setCustomInput(event.target.value)}
-      placeholder="e.g. 40, 10, 70, 20"
-      aria-label="Enter a custom array"
-    />
-
-    <button onClick={handleCustomArray}>
-      Use Custom Array
-    </button>
-  </div>
-</div>
 
 function App() {
   const [input, setInput] = useState('4, 2, 3')
   const [array, setArray] = useState([4, 2, 3])
+  const [customInput, setCustomInput] = useState('')
   const [algorithm, setAlgorithm] = useState('Bubble Sort')
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [error, setError] = useState('')
-
-  // Backend connection status
   const [apiStatus, setApiStatus] = useState('Checking...')
 
+  // Check whether the backend is running.
   useEffect(() => {
     fetch('http://localhost:5001/api/health')
       .then((response) => {
@@ -208,6 +158,7 @@ function App() {
     (item) => item.type === 'shift'
   ).length
 
+  // Automatically advance the animation while Play is active.
   useEffect(() => {
     if (!isPlaying) return
 
@@ -224,6 +175,14 @@ function App() {
 
     return () => clearInterval(timer)
   }, [isPlaying, steps.length])
+
+  function applyArray(values) {
+    setIsPlaying(false)
+    setArray(values)
+    setInput(values.join(', '))
+    setCurrentStep(0)
+    setError('')
+  }
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -244,10 +203,38 @@ function App() {
       return
     }
 
-    setIsPlaying(false)
-    setArray(values.map(Number))
-    setCurrentStep(0)
-    setError('')
+    applyArray(values.map(Number))
+  }
+
+  function handleGenerateArray() {
+    applyArray(generateRandomArray(8))
+  }
+
+  function handleResetArray() {
+    applyArray([4, 2, 3])
+    setCustomInput('')
+  }
+
+  function handleCustomArray() {
+    if (!isValidArray(customInput)) {
+      setError('Enter valid numbers separated by commas.')
+      return
+    }
+
+    const values = customInput
+      .split(',')
+      .map((value) => Number(value.trim()))
+
+    if (
+      values.length < 1 ||
+      values.length > 12 ||
+      values.some((value) => !Number.isInteger(value))
+    ) {
+      setError('Enter 1–12 whole numbers separated by commas.')
+      return
+    }
+
+    applyArray(values)
   }
 
   function handleAlgorithmChange(event) {
@@ -326,6 +313,42 @@ function App() {
 
           {error && <p className="error-message">{error}</p>}
         </form>
+
+        <div className="array-controls">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={handleGenerateArray}
+          >
+            Generate Random Array
+          </button>
+
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={handleResetArray}
+          >
+            Reset Array
+          </button>
+
+          <div className="custom-array-input">
+            <input
+              type="text"
+              value={customInput}
+              onChange={(event) => setCustomInput(event.target.value)}
+              placeholder="e.g. 8, 3, 6, 1"
+              aria-label="Enter a custom array"
+            />
+
+            <button
+              className="primary-button"
+              type="button"
+              onClick={handleCustomArray}
+            >
+              Use Custom Array
+            </button>
+          </div>
+        </div>
 
         <div className="algorithm-selector">
           <label htmlFor="algorithm">Choose algorithm</label>
