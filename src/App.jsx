@@ -27,7 +27,7 @@ function App() {
 }
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/health')
+    fetch('/api/health')
       .then((response) => response.json())
       .then((data) => setApiStatus(data.message))
       .catch(() => setApiStatus('Backend unavailable'))
@@ -87,8 +87,11 @@ function handleReset() {
         onReset={handleReset}
       />
       <ArrayVisualizer array={array} />
+      <AlgorithmInfo algorithm={algorithm} />
       <SortButton onSort={handleSort} isSorting={isSorting} />
+      
     </main>
+
   )
 }
 

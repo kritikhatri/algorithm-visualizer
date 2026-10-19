@@ -227,3 +227,11 @@
   flex: 1;
   border-radius: 8px 8px 0 0;
 }
+.complexity-info {
+  margin: 16px 0;
+  padding: 12px 18px;
+  background: #fff0f6;
+  color: #c45b91;
+  border-radius: 12px;
+  font-weight: 600;
+}
