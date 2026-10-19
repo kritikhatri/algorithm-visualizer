@@ -118,6 +118,7 @@ function App() {
     setError('')
   }
 
+  
   function handleSort() {
     const createSteps = algorithmFunctions[algorithm]
 
@@ -128,12 +129,18 @@ function App() {
 
     const steps = createSteps(array)
 
+    if (!steps || steps.length === 0) {
+      setError('Could not generate sorting steps.')
+      return
+    }
+
     setError('')
-    setIsPlaying(false)
     setAnimationSteps(steps)
     setCurrentStep(0)
+    setIsPlaying(false)
     setArray(steps[0].array)
   }
+
 
   function handlePrevious() {
     setIsPlaying(false)
@@ -213,8 +220,26 @@ function App() {
       <section className="playback-panel">
         <div className="playback-buttons">
           <button
-            onClick={handlePrevious}
-            disabled={!hasAnimation || currentStep === 0}
+          onClick={() => {
+            if (!hasAnimation) {
+              const createSteps = algorithmFunctions[algorithm]
+              const steps = createSteps(array)
+              if (!steps || steps.length === 0) {
+                setError('Could not generate sorting steps.')
+                return
+              }
+              setError('')
+              setAnimationSteps(steps)
+              setCurrentStep(0)
+              setArray(steps[0].array)
+              setIsPlaying(true)
+              } else if (isFinished) {
+                setCurrentStep(0)
+                setIsPlaying(true)
+              } else {
+                setIsPlaying((playing) => !playing)
+              }
+            }}
           >
             ← Previous
           </button>
