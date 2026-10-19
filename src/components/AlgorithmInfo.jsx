@@ -8,7 +8,7 @@ function AlgorithmInfo({ algorithm }) {
   return (
   <div className="complexity-info">
     <p>Time Complexity: {info[algorithm]}</p>
-    <p>Space Complexity: O(n)</p>
+    <p>Space Complexity: O(n) (includes the copied array)</p>
     <p>Algorithm: {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Sort</p>
   </div>
 )

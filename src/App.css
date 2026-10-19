@@ -235,3 +235,24 @@
   border-radius: 12px;
   font-weight: 600;
 }
+.panel {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 20px;
+  background: #fff0f6;
+  border: 1px solid #ffc2dc;
+  border-radius: 16px;
+  color: #9d174d;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+.panel h3 {
+  color: #db2777;
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+.panel p {
+  margin: 6px 0;
+}
