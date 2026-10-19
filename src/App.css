@@ -195,3 +195,35 @@
 .status-offline {
   background: #dc5265;
 }
+.array-visualizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  min-height: 180px;
+  padding: 20px;
+  height: 220px;
+}
+
+.array-bar {
+  flex: 1;
+  padding: 12px 4px;
+  background: #f3a6c8;
+  border-radius: 10px 10px 4px 4px;
+  text-align: center;
+  color: #64264a;
+  font-weight: bold;
+}
+.array-label {
+  font-weight: bold;
+  color: #c45b91;
+}
+.array-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.array-bar {
+  min-width: 24px;
+  flex: 1;
+  border-radius: 8px 8px 0 0;
+}
