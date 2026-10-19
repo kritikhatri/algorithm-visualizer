@@ -1,17 +1,39 @@
-function ArrayVisualizer({ array }) {
+
+function ArrayVisualizer({
+  array,
+  comparing = [],
+  swapping = [],
+  sorted = [],
+}) {
+  const maxValue = Math.max(...array.map((number) => Math.abs(number)), 1)
+
   return (
-    <div className="array-visualizer">
-    <p className="array-label">Array Visualization</p>
-      {(array.length ? array : [0]).map((number, index) => (
-        <div
-          key={index}
-          className="array-bar"
-          style={{ height: `${(number / Math.max(...array)) * 180}px` }}
-        >
-            {number}
-        </div>
-      ))}
-    </div>
+    <section className="visualizer-bars">
+      {array.map((number, index) => {
+        let barClass = 'bar'
+
+        if (swapping.includes(index)) {
+          barClass += ' bar-swapping'
+        } else if (comparing.includes(index)) {
+          barClass += ' bar-comparing'
+        } else if (sorted.includes(index)) {
+          barClass += ' bar-sorted'
+        }
+
+        return (
+          <div className="bar-container" key={index}>
+            <div
+              className={barClass}
+              style={{
+                height: `${Math.max((Math.abs(number) / maxValue) * 180, 12)}px`,
+              }}
+            >
+              <span>{number}</span>
+            </div>
+          </div>
+        )
+      })}
+    </section>
   )
 }
 

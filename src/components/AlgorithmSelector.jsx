@@ -1,7 +1,8 @@
+
 function AlgorithmSelector({ algorithm, setAlgorithm }) {
   return (
-    <section className="panel">
-      <label htmlFor="algorithm">Choose Algorithm</label>
+    <section className="algorithm-selector">
+      <label htmlFor="algorithm">Choose an algorithm</label>
 
       <select
         id="algorithm"
@@ -11,6 +12,8 @@ function AlgorithmSelector({ algorithm, setAlgorithm }) {
         <option value="bubble">Bubble Sort</option>
         <option value="selection">Selection Sort</option>
         <option value="insertion">Insertion Sort</option>
+        <option value="merge">Merge Sort</option>
+        <option value="quick">Quick Sort</option>
       </select>
     </section>
   )

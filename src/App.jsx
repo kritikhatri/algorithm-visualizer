@@ -6,36 +6,75 @@ import Header from './components/Header'
 import ArrayControls from './components/ArrayControls'
 import ArrayVisualizer from './components/ArrayVisualizer'
 import AlgorithmSelector from './components/AlgorithmSelector'
-import SortButton from './components/SortButton'
 import AlgorithmInfo from './components/AlgorithmInfo'
 import Statistics from './components/Statistics'
 
 import {
-  bubbleSort,
-  selectionSort,
-  insertionSort,
   bubbleSortSteps,
+  selectionSortSteps,
+  insertionSortSteps,
+  mergeSortSteps,
+  quickSortSteps,
 } from './utils/sorting'
+
+const algorithmFunctions = {
+  bubble: bubbleSortSteps,
+  selection: selectionSortSteps,
+  insertion: insertionSortSteps,
+  merge: mergeSortSteps,
+  quick: quickSortSteps,
+}
 
 function App() {
   const [apiStatus, setApiStatus] = useState('Checking...')
-
   const [input, setInput] = useState('4, 2, 3')
   const [array, setArray] = useState([4, 2, 3])
   const [error, setError] = useState('')
-
   const [algorithm, setAlgorithm] = useState('bubble')
-  const [isSorting, setIsSorting] = useState(false)
 
   const [animationSteps, setAnimationSteps] = useState([])
   const [currentStep, setCurrentStep] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [speed, setSpeed] = useState(600)
+
+  const currentFrame = animationSteps[currentStep]
 
   useEffect(() => {
     fetch('/api/health')
-      .then((response) => response.json())
-      .then((data) => setApiStatus(data.message))
+      .then((response) => {
+        if (!response.ok) throw new Error('Backend request failed')
+        return response.json()
+      })
+      .then((data) => setApiStatus(data.message || 'Connected'))
       .catch(() => setApiStatus('Backend unavailable'))
   }, [])
+
+  useEffect(() => {
+    if (!isPlaying || animationSteps.length === 0) return
+
+    if (currentStep >= animationSteps.length - 1) {
+      setIsPlaying(false)
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setCurrentStep((step) => step + 1)
+    }, speed)
+
+    return () => clearTimeout(timer)
+  }, [isPlaying, currentStep, animationSteps, speed])
+
+  useEffect(() => {
+    if (currentFrame) {
+      setArray(currentFrame.array)
+    }
+  }, [currentFrame])
+
+  function stopAnimation() {
+    setIsPlaying(false)
+    setAnimationSteps([])
+    setCurrentStep(0)
+  }
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -56,9 +95,8 @@ function App() {
       return
     }
 
+    stopAnimation()
     setArray(values.map(Number))
-    setAnimationSteps([])
-    setCurrentStep(0)
     setError('')
   }
 
@@ -67,99 +105,197 @@ function App() {
       Math.floor(Math.random() * 90) + 10
     )
 
+    stopAnimation()
     setArray(values)
     setInput(values.join(', '))
-    setAnimationSteps([])
-    setCurrentStep(0)
     setError('')
   }
 
   function handleReset() {
+    stopAnimation()
     setArray([4, 2, 3])
     setInput('4, 2, 3')
-    setAnimationSteps([])
-    setCurrentStep(0)
-    setIsSorting(false)
     setError('')
   }
 
   function handleSort() {
+    const createSteps = algorithmFunctions[algorithm]
+
+    if (!createSteps || array.length === 0) {
+      setError('Please enter an array before sorting.')
+      return
+    }
+
+    const steps = createSteps(array)
+
     setError('')
-
-    if (algorithm === 'bubble') {
-      const steps = bubbleSortSteps(array)
-
-      setAnimationSteps(steps)
-      setCurrentStep(0)
-      setArray(steps[0].array)
-    } else if (algorithm === 'selection') {
-      setArray(selectionSort(array))
-      setAnimationSteps([])
-      setCurrentStep(0)
-    } else if (algorithm === 'insertion') {
-      setArray(insertionSort(array))
-      setAnimationSteps([])
-      setCurrentStep(0)
-    }
+    setIsPlaying(false)
+    setAnimationSteps(steps)
+    setCurrentStep(0)
+    setArray(steps[0].array)
   }
 
-  function handleNextStep() {
-    if (currentStep < animationSteps.length - 1) {
-      const nextStep = currentStep + 1
-
-      setCurrentStep(nextStep)
-      setArray(animationSteps[nextStep].array)
-    }
+  function handlePrevious() {
+    setIsPlaying(false)
+    setCurrentStep((step) => Math.max(0, step - 1))
   }
+
+  function handleNext() {
+    setIsPlaying(false)
+    setCurrentStep((step) => Math.min(animationSteps.length - 1, step + 1))
+  }
+
+  function handleAlgorithmChange(value) {
+    stopAnimation()
+    setAlgorithm(value)
+    setError('')
+  }
+
+  const hasAnimation = animationSteps.length > 0
+  const isFinished = hasAnimation && currentStep === animationSteps.length - 1
 
   return (
     <main className="visualizer">
       <Header apiStatus={apiStatus} />
 
-      <AlgorithmSelector
-        algorithm={algorithm}
-        setAlgorithm={setAlgorithm}
-      />
+      <section className="control-panel">
+        <AlgorithmSelector
+          algorithm={algorithm}
+          setAlgorithm={handleAlgorithmChange}
+        />
 
-      <p>Selected: {algorithm}</p>
+        <ArrayControls
+          input={input}
+          setInput={setInput}
+          onSubmit={handleSubmit}
+          onGenerate={handleGenerate}
+          onReset={handleReset}
+        />
 
-      <ArrayControls
-        input={input}
-        setInput={setInput}
-        onSubmit={handleSubmit}
-        onGenerate={handleGenerate}
-        onReset={handleReset}
-      />
+        <button
+          className="sort-button primary-button"
+          onClick={handleSort}
+        >
+          <span>▶</span> Start Sorting
+        </button>
+      </section>
 
       {error && <p className="error">{error}</p>}
 
-      <ArrayVisualizer array={array} />
+      <section className="chart-panel">
+        <div className="section-heading">
+          <div>
+            <h2>Array Visualization</h2>
+            <p>Watch how the algorithm sorts your numbers.</p>
+          </div>
 
-      {algorithm === 'bubble' && animationSteps.length > 0 && (
-        <section className="panel">
-          <p>
-            Step: {currentStep} of {animationSteps.length - 1}
-          </p>
+          {hasAnimation && (
+            <span className="step-count">
+              Step {currentStep + 1} / {animationSteps.length}
+            </span>
+          )}
+        </div>
+
+        <ArrayVisualizer
+          array={array}
+          comparing={currentFrame?.comparing || []}
+          swapping={currentFrame?.swapping || []}
+          sorted={currentFrame?.sorted || []}
+        />
+
+        <div className="legend">
+          <span><i className="legend-dot comparing-dot" /> Comparing</span>
+          <span><i className="legend-dot swapping-dot" /> Swapping / moving</span>
+          <span><i className="legend-dot sorted-dot" /> Sorted</span>
+        </div>
+      </section>
+
+      <section className="playback-panel">
+        <div className="playback-buttons">
+          <button
+            onClick={handlePrevious}
+            disabled={!hasAnimation || currentStep === 0}
+          >
+            ← Previous
+          </button>
 
           <button
-            onClick={handleNextStep}
-            disabled={currentStep >= animationSteps.length - 1}
+            className="play-button"
+            onClick={() => {
+              if (!hasAnimation) {
+                handleSort()
+              } else if (isFinished) {
+                setCurrentStep(0)
+                setIsPlaying(true)
+              } else {
+                setIsPlaying((playing) => !playing)
+              }
+            }}
           >
-            {currentStep >= animationSteps.length - 1
-              ? 'Sorting Complete'
-              : 'Next Step'}
+            {!hasAnimation
+              ? '▶ Play'
+              : isFinished
+                ? '↻ Replay'
+                : isPlaying
+                  ? 'Ⅱ Pause'
+                  : '▶ Resume'}
           </button>
-        </section>
-      )}
+
+          <button
+            onClick={handleNext}
+            disabled={!hasAnimation || isFinished}
+          >
+            Next →
+          </button>
+        </div>
+
+        <div className="speed-control">
+          <label htmlFor="speed">
+            Animation speed
+            <strong>
+              {speed <= 200 ? ' Fast' : speed <= 500 ? ' Normal' : ' Slow'}
+            </strong>
+          </label>
+
+          <input
+            id="speed"
+            type="range"
+            min="100"
+            max="1000"
+            step="100"
+            value={speed}
+            onChange={(event) => setSpeed(Number(event.target.value))}
+          />
+
+          <div className="speed-labels">
+            <span>Fast</span>
+            <span>Slow</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="live-stats">
+        <article className="live-stat-card">
+          <span className="stat-icon">⌕</span>
+          <span className="stat-label">Comparisons</span>
+          <strong>{currentFrame?.comparisons ?? 0}</strong>
+        </article>
+
+        <article className="live-stat-card">
+          <span className="stat-icon">⇄</span>
+          <span className="stat-label">Swaps / moves</span>
+          <strong>{currentFrame?.swaps ?? 0}</strong>
+        </article>
+
+        <article className="live-stat-card">
+          <span className="stat-icon">▦</span>
+          <span className="stat-label">Array size</span>
+          <strong>{array.length}</strong>
+        </article>
+      </section>
 
       <Statistics array={array} />
-
       <AlgorithmInfo algorithm={algorithm} />
-
-      <SortButton
-        onSort={handleSort}
-        isSorting={isSorting}
-      />
     </main>
   )
 }
