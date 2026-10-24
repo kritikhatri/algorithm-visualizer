@@ -1,7 +1,8 @@
 /* global importScripts, loadPyodide */
 // Runs Python in a Web Worker so infinite loops can be stopped by terminating the worker.
 
-const PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v314.0.7/full/'
+// v0.27.7 (Python 3.12). The newer v314 CDN build fails to load inside workers.
+const PYODIDE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/'
 
 importScripts(`${PYODIDE_URL}pyodide.js`)
 
