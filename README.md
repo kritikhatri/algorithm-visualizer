@@ -1,36 +1,77 @@
 # Algorithm Visualizer
 
-An interactive learning project for understanding algorithms through step-by-step visualizations.
+An interactive, full-stack app for learning sorting algorithms through step-by-step visualizations.
 
-## Planned Features
+## Features
 
-* Sorting Algorithms: Visualize comparisons and swaps.
-* Binary Search Tree: Explore tree operations.
-* N-Queens: Understand backtracking.
-* Predict Mode: Predict the next algorithm step.
-* Race Mode: Compare algorithm execution.
+- Animated Bubble, Selection, Insertion, Merge and Quick Sort
+- Play, pause, step forward/back, and adjustable speed
+- Live comparison and swap counters
+- Time/space complexity and stability for each algorithm (served by the API)
+- Accounts (sign up / log in) with saved run history and per-algorithm stats
 
 ## Tech Stack
 
-* React
-* JavaScript
-* Vite
-* CSS
+- **Frontend:** React 19, Vite, CSS
+- **Backend:** Express 5 (TypeScript via `tsx`), JWT auth, bcrypt
+- **Database:** PostgreSQL with Prisma 7
+
+## Project Structure
+
+```
+src/                  React app
+  components/         UI components
+  utils/sorting.js    Step generators for each algorithm
+  api.js              Fetch helper (adds the auth token)
+server/
+  src/index.ts        Express app entry
+  src/auth.ts         /api/auth routes + requireAuth middleware
+  src/sessions.ts     /api/sessions routes (saved runs)
+  src/algorithms.ts   Algorithm metadata
+  src/prisma/         Prisma schema
+  prisma/migrations/  Database migrations
+```
 
 ## Getting Started
 
-Install dependencies:
+Requires Node 22+ and PostgreSQL 15+.
 
 ```bash
+# 1. Install dependencies
 npm install
-```
+npm --prefix server install
 
-Start the development server:
+# 2. Configure the server
+cp server/.env.example server/.env   # then fill in DATABASE_URL and JWT_SECRET
 
-```bash
+# 3. Create the database tables
+cd server && npx prisma migrate dev && cd ..
+
+# 4. Run the API and the frontend (two terminals)
+npm run dev:server
 npm run dev
 ```
 
-## Project Status
+Open http://localhost:5173. Vite proxies `/api` requests to the API on port 5001.
 
-Currently in development. Building the algorithm logic first, followed by visualization and interactive features.
+For production, `npm start` builds the frontend and serves it from the Express server.
+
+## API
+
+| Method | Route                | Auth | Description                     |
+| ------ | -------------------- | ---- | ------------------------------- |
+| GET    | `/api/health`        |      | Health check                    |
+| GET    | `/api/algorithms`    |      | Algorithm metadata              |
+| POST   | `/api/auth/register` |      | Create an account               |
+| POST   | `/api/auth/login`    |      | Log in, returns a JWT           |
+| GET    | `/api/auth/me`       | ✓    | Current user                    |
+| GET    | `/api/sessions`      | ✓    | Recent runs + per-algorithm stats |
+| POST   | `/api/sessions`      | ✓    | Save a run                      |
+| DELETE | `/api/sessions/:id`  | ✓    | Delete a run                    |
+
+## Roadmap
+
+- Binary Search Tree operations
+- N-Queens backtracking
+- Predict Mode: guess the next step
+- Race Mode: run algorithms side by side
