@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { GraphView, PlayerControls, VizLayout, layoutBinaryTree, randomInts, useStepPlayer } from './common'
+import { GraphView, PlayerControls, VizLayout } from './common'
+import { layoutBinaryTree, randomInts, useStepPlayer } from './helpers'
 
 const CODE = `def insert(root, val):
     if root is None:

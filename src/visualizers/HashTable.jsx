@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { PlayerControls, VizLayout, useStepPlayer } from './common'
+import { PlayerControls, VizLayout } from './common'
+import { useStepPlayer } from './helpers'
 
 const SIZE = 7
 

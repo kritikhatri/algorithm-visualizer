@@ -1,13 +1,7 @@
 import { useMemo, useState } from 'react'
 import { sortingAlgorithms } from './sortingSteps'
-import {
-  ArrayBars,
-  NumberListInput,
-  PlayerControls,
-  VizLayout,
-  randomInts,
-  useStepPlayer,
-} from './common'
+import { ArrayBars, NumberListInput, PlayerControls, VizLayout } from './common'
+import { randomInts, useStepPlayer } from './helpers'
 
 function Sorting() {
   const [algorithm, setAlgorithm] = useState('bubble')

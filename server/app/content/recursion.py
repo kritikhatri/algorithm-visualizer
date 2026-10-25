@@ -101,7 +101,7 @@ print(subsets([1, 2, 3]))
             "statement": """
 Return the `n`-th Fibonacci number, where `fib(0) = 0`, `fib(1) = 1`, and `fib(n) = fib(n-1) + fib(n-2)`.
 
-The last test uses `n = 80`; naive recursion will time out, so memoize or iterate.
+The last test uses `n = 70`; naive recursion will time out, so memoize or iterate.
 
 **Example**
 
@@ -116,7 +116,7 @@ fib(10)  ->  55
                 {"args": [1], "expected": 1},
                 {"args": [10], "expected": 55},
                 {"args": [20], "expected": 6765},
-                {"args": [80], "expected": 23416728348467685},
+                {"args": [70], "expected": 190392490709135},
             ],
             "hints": ["Use `@functools.cache`, a dict memo, or just loop keeping the last two values."],
             "solution": r'''def fib(n):

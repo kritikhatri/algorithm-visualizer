@@ -100,7 +100,7 @@ sum_to_n(5)  ->  15
 sum_to_n(0)  ->  0
 ```
 
-*Constraints:* `0 <= n <= 10⁹`
+*Constraints:* `0 <= n <= 10⁷`
 """,
             "function": "sum_to_n",
             "starter": "def sum_to_n(n):\n    pass\n",
@@ -109,7 +109,7 @@ sum_to_n(0)  ->  0
                 {"args": [0], "expected": 0},
                 {"args": [1], "expected": 1},
                 {"args": [100], "expected": 5050},
-                {"args": [1000000000], "expected": 500000000500000000},
+                {"args": [10000000], "expected": 50000005000000},
             ],
             "hints": [
                 "Pair the first and last numbers: 1 + n, 2 + (n − 1), …",

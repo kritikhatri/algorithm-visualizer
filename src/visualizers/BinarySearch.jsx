@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { ArrayCells, PlayerControls, VizLayout, useStepPlayer } from './common'
+import { ArrayCells, PlayerControls, VizLayout } from './common'
+import { useStepPlayer } from './helpers'
 
 const CODE = `def binary_search(nums, target):
     lo, hi = 0, len(nums) - 1

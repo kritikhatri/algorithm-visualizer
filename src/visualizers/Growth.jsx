@@ -25,7 +25,7 @@ const SERIES = [
 
 const W = 640
 const H = 320
-const M = { top: 16, right: 84, bottom: 36, left: 56 }
+const M = { top: 16, right: 100, bottom: 36, left: 56 }
 const PLOT_W = W - M.left - M.right
 const PLOT_H = H - M.top - M.bottom
 

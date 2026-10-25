@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { GraphView, PlayerControls, VizLayout, useStepPlayer } from './common'
+import { GraphView, PlayerControls, VizLayout } from './common'
+import { useStepPlayer } from './helpers'
 
 const PLAIN = `def fib(n):
     if n < 2:

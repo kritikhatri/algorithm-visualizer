@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { PlayerControls, VizLayout, useStepPlayer } from './common'
+import { PlayerControls, VizLayout } from './common'
+import { useStepPlayer } from './helpers'
 
 const CODE = `def lcs(a, b):
     dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]

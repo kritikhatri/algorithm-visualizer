@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { ArrayCells, NumberListInput, PlayerControls, VizLayout, useStepPlayer } from './common'
+import { ArrayCells, NumberListInput, PlayerControls, VizLayout } from './common'
+import { useStepPlayer } from './helpers'
 
 const CODE = `def pair_sum_sorted(nums, target):
     left, right = 0, len(nums) - 1

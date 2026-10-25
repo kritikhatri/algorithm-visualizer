@@ -13,8 +13,6 @@ function Home() {
   const totalQuestions = topics.reduce((sum, topic) => sum + topic.quizCount, 0)
   const nextTopic = topics.find((topic) => !completed.has(topic.id)) ?? topics[0]
 
-  const categories = [...new Set(topics.map((topic) => topic.category))]
-
   return (
     <>
       <section className="hero">
@@ -71,28 +69,24 @@ function Home() {
         </p>
       )}
 
-      {categories.map((category) => (
-        <section className="topic-group" key={category}>
-          <h2 className="section-title">{category}</h2>
-          <div className="topic-grid">
-            {topics
-              .filter((topic) => topic.category === category)
-              .map((topic) => (
-                <Link className="card topic-card" to={`/topics/${topic.id}`} key={topic.id}>
-                  <span className="topic-number">
-                    {String(topics.indexOf(topic) + 1).padStart(2, '0')}
-                  </span>
-                  {completed.has(topic.id) && <span className="done-badge">✓ Done</span>}
-                  <h3>{topic.title}</h3>
-                  <p className="muted">{topic.summary}</p>
-                  <span className="topic-meta">
-                    {topic.problemCount} problems · {topic.quizCount}-question quiz
-                  </span>
-                </Link>
-              ))}
-          </div>
-        </section>
-      ))}
+      <section className="topic-group">
+        <h2 className="section-title">Learning path</h2>
+        <div className="topic-grid">
+          {topics.map((topic, index) => (
+            <Link className="card topic-card" to={`/topics/${topic.id}`} key={topic.id}>
+              <span className="topic-number">
+                {String(index + 1).padStart(2, '0')} · {topic.category}
+              </span>
+              {completed.has(topic.id) && <span className="done-badge">✓ Done</span>}
+              <h3>{topic.title}</h3>
+              <p className="muted">{topic.summary}</p>
+              <span className="topic-meta">
+                {topic.problemCount} problems · {topic.quizCount}-question quiz
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </>
   )
 }

@@ -1,77 +1,72 @@
-# Algorithm Visualizer
+# DSA Study Lab
 
-An interactive, full-stack app for learning sorting algorithms through step-by-step visualizations.
+A full-stack app for learning data structures and algorithms in Python: short lessons, step-by-step visualizers that highlight the running line of Python, practice problems you solve in the browser, and quizzes, with progress saved to your account.
 
 ## Features
 
-- Animated Bubble, Selection, Insertion, Merge and Quick Sort
-- Play, pause, step forward/back, and adjustable speed
-- Live comparison and swap counters
-- Time/space complexity and stability for each algorithm (served by the API)
-- Accounts (sign up / log in) with saved run history and per-algorithm stats
+- **12 topics**: Big-O, arrays & two pointers, hash maps, linked lists, stacks & queues, recursion & backtracking, sorting, binary search, trees & BSTs, heaps, graphs (BFS/DFS) and dynamic programming
+- **Interactive visualizers** for every topic, with play/pause/step controls, live variables and Python line highlighting
+- **37 practice problems** with hints and reference solutions; your code runs against test cases in the browser via [Pyodide](https://pyodide.org)
+- **Python playground** for free experimentation
+- **Quizzes** graded by the server, with explanations
+- **Progress dashboard**: completed topics, solved problems, best quiz scores
 
-## Tech Stack
+## Tech stack
 
-- **Frontend:** React 19, Vite, CSS
-- **Backend:** Express 5 (TypeScript via `tsx`), JWT auth, bcrypt
-- **Database:** PostgreSQL with Prisma 7
+- **Frontend:** React 19, React Router, Vite, CodeMirror, Pyodide (in a Web Worker)
+- **Backend:** Python, FastAPI, SQLAlchemy, Alembic, JWT auth with bcrypt
+- **Database:** PostgreSQL
+- **Tests:** pytest (API tests, plus every reference solution is run against its own test cases)
 
-## Project Structure
+## Project structure
 
 ```
-src/                  React app
-  components/         UI components
-  utils/sorting.js    Step generators for each algorithm
-  api.js              Fetch helper (adds the auth token)
+src/
+  pages/          Home, Topic, Problems, Problem, Playground, Dashboard
+  components/     Navbar, CodeEditor, Quiz, TestResults, ...
+  visualizers/    One component per topic + shared player/layout
+  python/         harness.py (test runner), Pyodide worker and runner
 server/
-  src/index.ts        Express app entry
-  src/auth.ts         /api/auth routes + requireAuth middleware
-  src/sessions.ts     /api/sessions routes (saved runs)
-  src/algorithms.ts   Algorithm metadata
-  src/prisma/         Prisma schema
-  prisma/migrations/  Database migrations
+  app/main.py     FastAPI app
+  app/routers/    auth, content, progress
+  app/content/    Lessons, problems and quizzes (one module per topic)
+  migrations/     Alembic migrations
+  tests/          pytest suite
 ```
 
-## Getting Started
+## Getting started
 
-Requires Node 22+ and PostgreSQL 15+.
+Requires Node 22+, Python 3.12+ and PostgreSQL.
 
 ```bash
-# 1. Install dependencies
+# Frontend dependencies
 npm install
-npm --prefix server install
 
-# 2. Configure the server
-cp server/.env.example server/.env   # then fill in DATABASE_URL and JWT_SECRET
+# Backend: virtualenv, dependencies and config
+cd server
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+cp .env.example .env          # fill in DATABASE_URL and JWT_SECRET
+.venv/bin/alembic upgrade head
+cd ..
 
-# 3. Create the database tables
-cd server && npx prisma migrate dev && cd ..
-
-# 4. Run the API and the frontend (two terminals)
-npm run dev:server
-npm run dev
+# Run (two terminals)
+npm run dev:server            # API on http://localhost:8000
+npm run dev                   # app on http://localhost:5173
 ```
 
-Open http://localhost:5173. Vite proxies `/api` requests to the API on port 5001.
-
-For production, `npm start` builds the frontend and serves it from the Express server.
+Run the backend tests with `npm run test:server`. For production, `npm start` builds the frontend and serves it from FastAPI.
 
 ## API
 
-| Method | Route                | Auth | Description                     |
-| ------ | -------------------- | ---- | ------------------------------- |
-| GET    | `/api/health`        |      | Health check                    |
-| GET    | `/api/algorithms`    |      | Algorithm metadata              |
-| POST   | `/api/auth/register` |      | Create an account               |
-| POST   | `/api/auth/login`    |      | Log in, returns a JWT           |
-| GET    | `/api/auth/me`       | ✓    | Current user                    |
-| GET    | `/api/sessions`      | ✓    | Recent runs + per-algorithm stats |
-| POST   | `/api/sessions`      | ✓    | Save a run                      |
-| DELETE | `/api/sessions/:id`  | ✓    | Delete a run                    |
-
-## Roadmap
-
-- Binary Search Tree operations
-- N-Queens backtracking
-- Predict Mode: guess the next step
-- Race Mode: run algorithms side by side
+| Method | Route | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/topics` | | List topics |
+| GET | `/api/topics/{id}` | | Lesson, snippets, complexity and problems |
+| GET / POST | `/api/topics/{id}/quiz` | optional | Get questions / submit answers |
+| GET | `/api/problems` · `/api/problems/{id}` | | Problems |
+| POST | `/api/auth/register` · `/api/auth/login` | | Get a JWT |
+| GET | `/api/auth/me` | ✓ | Current user |
+| GET | `/api/progress` | ✓ | Dashboard data |
+| PUT / DELETE | `/api/progress/topics/{id}` | ✓ | Mark a topic complete / incomplete |
+| GET / PUT | `/api/problems/{id}/progress` | ✓ | Saved code and solved status |

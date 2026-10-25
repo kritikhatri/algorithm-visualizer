@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ArrayCells, GraphView, PlayerControls, VizLayout, layoutBinaryTree, stateOf, useStepPlayer } from './common'
+import { ArrayCells, GraphView, PlayerControls, VizLayout } from './common'
+import { layoutBinaryTree, stateOf, useStepPlayer } from './helpers'
 
 const CODE = `def push(heap, val):
     heap.append(val)

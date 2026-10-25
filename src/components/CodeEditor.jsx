@@ -25,7 +25,7 @@ function highlightLine(line) {
 
 function CodeEditor({ value, onChange, readOnly = false, activeLine, minHeight, maxHeight }) {
   const extensions = useMemo(
-    () => [python(), theme, EditorView.lineWrapping, highlightLine(activeLine)],
+    () => [python(), theme, highlightLine(activeLine)],
     [activeLine]
   )
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { pyRepr } from '../utils/format'
-import { VizLayout, raw } from './common'
+import { VizLayout } from './common'
+import { raw } from './helpers'
 
 const CODE = `from collections import deque
 

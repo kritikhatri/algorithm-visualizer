@@ -23,6 +23,24 @@ def test_ids_are_unique():
     assert len({p["id"] for p in PROBLEMS}) == len(PROBLEMS)
 
 
+def _ints(value):
+    if isinstance(value, bool):
+        return
+    if isinstance(value, int):
+        yield value
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            yield from _ints(item)
+
+
+@pytest.mark.parametrize("problem", PROBLEMS, ids=lambda p: p["id"])
+def test_values_survive_javascript(problem):
+    """Browsers parse test data as JS numbers, which are exact only up to 2**53."""
+    for test in problem["tests"]:
+        for value in _ints([test["args"], test["expected"]]):
+            assert abs(value) <= 2**53, value
+
+
 @pytest.mark.parametrize("topic", TOPICS, ids=lambda t: t["id"])
 def test_topic_shape(topic):
     for key in ("title", "category", "summary", "visualizer", "lesson", "complexity", "snippets"):
