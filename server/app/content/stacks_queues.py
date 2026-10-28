@@ -216,6 +216,71 @@ daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73])
     return answer
 ''',
         },
+        {
+            'id': 'evaluate-rpn',
+            'title': 'Evaluate Reverse Polish Notation',
+            'difficulty': 'Medium',
+            "statement": """
+Evaluate an arithmetic expression in Reverse Polish Notation, given as a list of tokens. Operators are `+ - * /`; division **truncates toward zero**.
+
+**Example**
+
+```
+eval_rpn(["2", "1", "+", "3", "*"])  ->  9   ((2 + 1) * 3)
+```
+""",
+            'function': 'eval_rpn',
+            'starter': 'def eval_rpn(tokens):\n    pass\n',
+            'tests': [{'args': [['2', '1', '+', '3', '*']], 'expected': 9}, {'args': [['4', '13', '5', '/', '+']], 'expected': 6}, {'args': [['10', '6', '9', '3', '+', '-11', '*', '/', '*', '17', '+', '5', '+']], 'expected': 22}],
+            'hints': ['Push numbers. On an operator, pop two values, apply it, push the result.', 'The first value popped is the RIGHT operand. Use int(a / b) to truncate toward zero.'],
+            'solution': r'''def eval_rpn(tokens):
+    stack = []
+    for token in tokens:
+        if token in ("+", "-", "*", "/"):
+            b, a = stack.pop(), stack.pop()
+            if token == "+":
+                stack.append(a + b)
+            elif token == "-":
+                stack.append(a - b)
+            elif token == "*":
+                stack.append(a * b)
+            else:
+                stack.append(int(a / b))
+        else:
+            stack.append(int(token))
+    return stack[0]
+''',
+        },
+        {
+            'id': 'largest-rectangle-histogram',
+            'title': 'Largest Rectangle in Histogram',
+            'difficulty': 'Hard',
+            "statement": """
+Bars of width 1 have heights `heights`. Return the area of the largest rectangle that fits inside the histogram.
+
+**Example**
+
+```
+largest_rectangle_area([2, 1, 5, 6, 2, 3])  ->  10   (bars 5 and 6, height 5 × width 2)
+```
+""",
+            'function': 'largest_rectangle_area',
+            'starter': 'def largest_rectangle_area(heights):\n    pass\n',
+            'tests': [{'args': [[2, 1, 5, 6, 2, 3]], 'expected': 10}, {'args': [[2, 4]], 'expected': 4}, {'args': [[1]], 'expected': 1}, {'args': [[2, 1, 2]], 'expected': 3}],
+            'hints': ['Keep a stack of (start index, height) with increasing heights.', "When a shorter bar arrives, pop taller bars: each popped bar's rectangle ends here.", "A popped bar's start index can be reused by the new shorter bar."],
+            'solution': r'''def largest_rectangle_area(heights):
+    stack = []  # (start index, height), heights increasing
+    best = 0
+    for i, h in enumerate(heights + [0]):
+        start = i
+        while stack and stack[-1][1] > h:
+            index, height = stack.pop()
+            best = max(best, height * (i - index))
+            start = index
+        stack.append((start, h))
+    return best
+''',
+        },
     ],
     "quiz": [
         {
@@ -253,5 +318,12 @@ daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73])
             "answer": 1,
             "explanation": "Total pops across the whole run can't exceed total pushes, which is n.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Stack order?', 'back': 'LIFO: last in, first out. push/pop at the same end.'},
+        {'front': 'Queue order?', 'back': 'FIFO: first in, first out. Add at the back, remove from the front.'},
+        {'front': 'Best Python queue?', 'back': 'collections.deque with append() and popleft(), both O(1).'},
+        {'front': 'Classic stack problems?', 'back': 'Matching brackets, undo, DFS, expression evaluation, monotonic stack (next greater element).'},
+        {'front': 'Why is a monotonic stack pass O(n)?', 'back': 'Each element is pushed once and popped at most once.'},
     ],
 }

@@ -195,6 +195,62 @@ def first_unique_char(s):
     return -1
 ''',
         },
+        {
+            'id': 'longest-consecutive-sequence',
+            'title': 'Longest Consecutive Sequence',
+            'difficulty': 'Medium',
+            "statement": """
+Return the length of the longest run of consecutive integers in unsorted `nums`, in `O(n)` time.
+
+**Example**
+
+```
+longest_consecutive([100, 4, 200, 1, 3, 2])  ->  4   (1, 2, 3, 4)
+```
+""",
+            'function': 'longest_consecutive',
+            'starter': 'def longest_consecutive(nums):\n    pass\n',
+            'tests': [{'args': [[100, 4, 200, 1, 3, 2]], 'expected': 4}, {'args': [[0, 3, 7, 2, 5, 8, 4, 6, 0, 1]], 'expected': 9}, {'args': [[]], 'expected': 0}, {'args': [[1, 2, 0, 1]], 'expected': 3}],
+            'hints': ['Put everything in a set for O(1) lookups.', 'Only start counting from numbers where n − 1 is NOT in the set.'],
+            'solution': r'''def longest_consecutive(nums):
+    values = set(nums)
+    best = 0
+    for n in values:
+        if n - 1 not in values:
+            length = 1
+            while n + length in values:
+                length += 1
+            best = max(best, length)
+    return best
+''',
+        },
+        {
+            'id': 'subarray-sum-equals-k',
+            'title': 'Subarray Sum Equals K',
+            'difficulty': 'Medium',
+            "statement": """
+Count the contiguous subarrays of `nums` whose sum is exactly `k`. Numbers may be negative.
+
+**Example**
+
+```
+subarray_sum([1, 2, 3], 3)  ->  2   ([1, 2] and [3])
+```
+""",
+            'function': 'subarray_sum',
+            'starter': 'def subarray_sum(nums, k):\n    pass\n',
+            'tests': [{'args': [[1, 1, 1], 2], 'expected': 2}, {'args': [[1, 2, 3], 3], 'expected': 2}, {'args': [[1, -1, 0], 0], 'expected': 3}, {'args': [[3, 4, 7, 2, -3, 1, 4, 2], 7], 'expected': 4}],
+            'hints': ['sum(i..j) = prefix[j] − prefix[i − 1].', 'Count how often each prefix sum has appeared; look up `total − k` as you go.'],
+            'solution': r'''def subarray_sum(nums, k):
+    seen = {0: 1}
+    total = answer = 0
+    for num in nums:
+        total += num
+        answer += seen.get(total - k, 0)
+        seen[total] = seen.get(total, 0) + 1
+    return answer
+''',
+        },
     ],
     "quiz": [
         {
@@ -242,5 +298,12 @@ def first_unique_char(s):
             "answer": 1,
             "explanation": "Then `target - num` can be looked up in O(1) to find the partner's index.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Average time for dict lookup, insert and delete?', 'back': 'O(1) on average; O(n) worst case if everything collides.'},
+        {'front': 'What can be a dict key?', 'back': 'Any hashable (immutable) value: int, str, tuple. Not list, dict or set.'},
+        {'front': 'What is a hash collision?', 'back': 'Two different keys mapping to the same bucket. Tables handle it by chaining or probing.'},
+        {'front': 'Two Sum in O(n): what do you store?', 'back': 'A dict from each number to its index; look up target − num before inserting.'},
+        {'front': 'Fastest way to count items in Python?', 'back': 'collections.Counter(items), or counts[x] = counts.get(x, 0) + 1.'},
     ],
 }

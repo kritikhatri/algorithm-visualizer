@@ -4,22 +4,30 @@ from . import (
     arrays,
     big_o,
     binary_search,
+    bit_manipulation,
     dynamic_programming,
     graphs,
+    greedy,
     hashing,
     heaps,
     linked_lists,
     recursion,
+    shortest_paths,
+    sliding_window,
     sorting,
     stacks_queues,
     trees,
+    tries,
+    union_find,
 )
 
 TOPICS = [
     module.TOPIC
     for module in (
         big_o,
+        bit_manipulation,
         arrays,
+        sliding_window,
         hashing,
         linked_lists,
         stacks_queues,
@@ -27,8 +35,12 @@ TOPICS = [
         sorting,
         binary_search,
         trees,
+        tries,
         heaps,
         graphs,
+        shortest_paths,
+        union_find,
+        greedy,
         dynamic_programming,
     )
 ]
@@ -42,3 +54,12 @@ for topic in TOPICS:
 PROBLEMS = [problem for topic in TOPICS for problem in topic["problems"]]
 
 PROBLEMS_BY_ID = {problem["id"]: problem for problem in PROBLEMS}
+
+# Card ids are "<topic>:<index>", stable as long as cards are only appended.
+CARDS = [
+    {"id": f"{topic['id']}:{i}", "topic": topic["id"], **card}
+    for topic in TOPICS
+    for i, card in enumerate(topic["flashcards"])
+]
+
+CARDS_BY_ID = {card["id"]: card for card in CARDS}

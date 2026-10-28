@@ -196,6 +196,77 @@ nums  ->  [1, 3, 12, 0, 0]
             slow += 1
 ''',
         },
+        {
+            'id': 'container-with-most-water',
+            'title': 'Container With Most Water',
+            'difficulty': 'Medium',
+            "statement": """
+`height[i]` is the height of a vertical line at position `i`. Pick two lines that, with the x-axis, hold the most water. Return that area: `min(height[i], height[j]) * (j - i)`.
+
+**Example**
+
+```
+max_area([1, 8, 6, 2, 5, 4, 8, 3, 7])  ->  49
+```
+""",
+            'function': 'max_area',
+            'starter': 'def max_area(height):\n    pass\n',
+            'tests': [{'args': [[1, 8, 6, 2, 5, 4, 8, 3, 7]], 'expected': 49}, {'args': [[1, 1]], 'expected': 1}, {'args': [[4, 3, 2, 1, 4]], 'expected': 16}, {'args': [[1, 2, 1]], 'expected': 2}],
+            'hints': ['Start with the widest container: pointers at both ends.', 'Always move the shorter line inward. Moving the taller one can never help.'],
+            'solution': r'''def max_area(height):
+    left, right = 0, len(height) - 1
+    best = 0
+    while left < right:
+        best = max(best, min(height[left], height[right]) * (right - left))
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return best
+''',
+        },
+        {
+            'id': 'three-sum',
+            'title': '3Sum',
+            'difficulty': 'Medium',
+            "statement": """
+Return all **unique** triplets `[a, b, c]` from `nums` with `a + b + c == 0`. The order of triplets and of numbers inside them doesn't matter.
+
+**Example**
+
+```
+three_sum([-1, 0, 1, 2, -1, -4])  ->  [[-1, -1, 2], [-1, 0, 1]]
+```
+""",
+            'function': 'three_sum',
+            'compare': 'unordered_nested',
+            'starter': 'def three_sum(nums):\n    pass\n',
+            'tests': [{'args': [[-1, 0, 1, 2, -1, -4]], 'expected': [[-1, -1, 2], [-1, 0, 1]]}, {'args': [[0, 1, 1]], 'expected': []}, {'args': [[0, 0, 0]], 'expected': [[0, 0, 0]]}, {'args': [[-2, 0, 1, 1, 2]], 'expected': [[-2, 0, 2], [-2, 1, 1]]}],
+            'hints': ['Sort first. Fix one number, then find pairs with two pointers.', 'Skip equal neighbours to avoid duplicate triplets.'],
+            'solution': r'''def three_sum(nums):
+    nums = sorted(nums)
+    result = []
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+        left, right = i + 1, len(nums) - 1
+        while left < right:
+            total = nums[i] + nums[left] + nums[right]
+            if total < 0:
+                left += 1
+            elif total > 0:
+                right -= 1
+            else:
+                result.append([nums[i], nums[left], nums[right]])
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+                left += 1
+                right -= 1
+    return result
+''',
+        },
     ],
     "quiz": [
         {
@@ -238,5 +309,12 @@ nums  ->  [1, 3, 12, 0, 0]
             "answer": 1,
             "explanation": "Slicing always creates a new list; use nums.reverse() to reverse in place.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Time to access nums[i] in a Python list?', 'back': 'O(1): the address is computed directly from the index.'},
+        {'front': 'Time to insert at the front of a list?', 'back': 'O(n): every element shifts right. Use collections.deque for O(1).'},
+        {'front': 'When does the opposite-ends two-pointer trick work?', 'back': 'When the data is sorted (or has a monotonic property), so each move safely discards candidates.'},
+        {'front': 'What are fast/slow pointers in an array?', 'back': 'slow marks where the next kept element goes; fast scans ahead. Used for in-place filtering.'},
+        {'front': 'nums[::-1] vs nums.reverse()?', 'back': 'Slicing makes a new reversed list (O(n) space); reverse() reverses in place.'},
     ],
 }

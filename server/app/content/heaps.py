@@ -217,6 +217,78 @@ def merge_k_sorted(lists):
     return merged
 ''',
         },
+        {
+            'id': 'last-stone-weight',
+            'title': 'Last Stone Weight',
+            'difficulty': 'Easy',
+            "statement": """
+Repeatedly smash the two heaviest stones `x ≤ y`: if equal both are destroyed, otherwise a stone of weight `y − x` remains. Return the last stone's weight, or `0` if none are left.
+
+**Example**
+
+```
+last_stone_weight([2, 7, 4, 1, 8, 1])  ->  1
+```
+""",
+            'function': 'last_stone_weight',
+            'starter': 'import heapq\n\n\ndef last_stone_weight(stones):\n    pass\n',
+            'tests': [{'args': [[2, 7, 4, 1, 8, 1]], 'expected': 1}, {'args': [[1]], 'expected': 1}, {'args': [[2, 2]], 'expected': 0}, {'args': [[10, 4, 2, 10]], 'expected': 2}],
+            'hints': ['Use a max-heap: push negated weights into heapq.'],
+            'solution': r'''import heapq
+
+
+def last_stone_weight(stones):
+    heap = [-s for s in stones]
+    heapq.heapify(heap)
+    while len(heap) > 1:
+        y, x = -heapq.heappop(heap), -heapq.heappop(heap)
+        if y != x:
+            heapq.heappush(heap, -(y - x))
+    return -heap[0] if heap else 0
+''',
+        },
+        {
+            'id': 'find-median-data-stream',
+            'title': 'Find Median from Data Stream',
+            'difficulty': 'Hard',
+            "statement": """
+Design `MedianFinder` with `add_num(num)` and `find_median()`, where the median of an even count is the mean of the two middle values. Aim for `O(log n)` adds and `O(1)` median.
+
+**Example**
+
+```
+m = MedianFinder()
+m.add_num(1); m.add_num(2)
+m.find_median()  ->  1.5
+m.add_num(3)
+m.find_median()  ->  2.0
+```
+""",
+            'function': 'MedianFinder',
+            'mode': 'design',
+            'starter': 'import heapq\n\n\nclass MedianFinder:\n    def __init__(self):\n        pass\n\n    def add_num(self, num):\n        pass\n\n    def find_median(self):\n        pass\n',
+            'tests': [{'ops': ['MedianFinder', 'add_num', 'add_num', 'find_median', 'add_num', 'find_median'], 'args': [[], [1], [2], [], [3], []], 'expected': [None, None, None, 1.5, None, 2.0]}, {'ops': ['MedianFinder', 'add_num', 'find_median', 'add_num', 'find_median', 'add_num', 'find_median'], 'args': [[], [5], [], [15], [], [1], []], 'expected': [None, None, 5.0, None, 10.0, None, 5.0]}],
+            'hints': ['Keep the smaller half in a max-heap and the larger half in a min-heap.', 'Rebalance so the max-heap has the same size or one more element.'],
+            'solution': r'''import heapq
+
+
+class MedianFinder:
+    def __init__(self):
+        self.low = []   # max-heap of the smaller half (negated)
+        self.high = []  # min-heap of the larger half
+
+    def add_num(self, num):
+        heapq.heappush(self.low, -num)
+        heapq.heappush(self.high, -heapq.heappop(self.low))
+        if len(self.high) > len(self.low):
+            heapq.heappush(self.low, -heapq.heappop(self.high))
+
+    def find_median(self):
+        if len(self.low) > len(self.high):
+            return float(-self.low[0])
+        return (-self.low[0] + self.high[0]) / 2
+''',
+        },
     ],
     "quiz": [
         {
@@ -259,5 +331,12 @@ def merge_k_sorted(lists):
             "answer": 1,
             "explanation": "The root is the smallest of the current top k; anything bigger replaces it. O(n log k).",
         },
+    ],
+    "flashcards": [
+        {'front': 'Where is the minimum in a min-heap?', 'back': 'At the root, heap[0]. O(1) to read.'},
+        {'front': 'Cost of heappush / heappop?', 'back': 'O(log n): sift up / sift down along one path.'},
+        {'front': 'Children and parent of index i?', 'back': 'Children 2i + 1 and 2i + 2; parent (i − 1) // 2.'},
+        {'front': 'Max-heap with heapq?', 'back': 'Push negated values and negate again when popping.'},
+        {'front': 'Top k largest of n items efficiently?', 'back': 'Keep a min-heap of size k: O(n log k).'},
     ],
 }

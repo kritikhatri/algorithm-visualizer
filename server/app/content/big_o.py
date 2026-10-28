@@ -153,6 +153,31 @@ running_sum([1, 2, 3, 4])  ->  [1, 3, 6, 10]
     return result
 ''',
         },
+        {
+            'id': 'max-subarray',
+            'title': 'Maximum Subarray',
+            'difficulty': 'Medium',
+            "statement": """
+Return the largest sum of any **contiguous**, non-empty subarray of `nums`. The brute force checks all `O(n²)` subarrays; Kadane's algorithm does it in one `O(n)` pass.
+
+**Example**
+
+```
+max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4])  ->  6   ([4, -1, 2, 1])
+```
+""",
+            'function': 'max_subarray',
+            'starter': 'def max_subarray(nums):\n    pass\n',
+            'tests': [{'args': [[-2, 1, -3, 4, -1, 2, 1, -5, 4]], 'expected': 6}, {'args': [[1]], 'expected': 1}, {'args': [[5, 4, -1, 7, 8]], 'expected': 23}, {'args': [[-3, -1, -2]], 'expected': -1}],
+            'hints': ['At each index, either extend the previous subarray or start fresh here.', 'current = max(num, current + num); track the best current seen.'],
+            'solution': r'''def max_subarray(nums):
+    best = current = nums[0]
+    for num in nums[1:]:
+        current = max(num, current + num)
+        best = max(best, current)
+    return best
+''',
+        },
     ],
     "quiz": [
         {
@@ -185,5 +210,12 @@ running_sum([1, 2, 3, 4])  ->  [1, 3, 6, 10]
             "answer": 0,
             "explanation": "Only a couple of index variables are used, regardless of n.",
         },
+    ],
+    "flashcards": [
+        {'front': 'What does Big-O describe?', 'back': "How an algorithm's work (or memory) grows as the input size n grows, ignoring constants."},
+        {'front': 'Two separate loops over n, one after the other?', 'back': 'O(n + n) = O(n). Sequential steps add.'},
+        {'front': 'A loop over n containing a loop over n?', 'back': 'O(n²). Nested steps multiply.'},
+        {'front': 'Cost of `x in my_list` vs `x in my_set`?', 'back': 'List: O(n) scan. Set: O(1) on average via hashing.'},
+        {'front': 'What makes an algorithm O(log n)?', 'back': 'It shrinks the problem by a constant factor (e.g. halves it) each step.'},
     ],
 }

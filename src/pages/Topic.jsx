@@ -6,6 +6,7 @@ import CodeSnippet from '../components/CodeSnippet'
 import Difficulty from '../components/Difficulty'
 import Markdown from '../components/Markdown'
 import Quiz from '../components/Quiz'
+import FlashcardDeck from '../components/FlashcardDeck'
 import { visualizers } from '../visualizers'
 import NotFound from './NotFound'
 
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'visualize', label: 'Visualize' },
   { id: 'practice', label: 'Practice' },
   { id: 'quiz', label: 'Quiz' },
+  { id: 'cards', label: 'Flashcards' },
 ]
 
 function Topic() {
@@ -103,6 +105,7 @@ function Topic() {
               <Link className="button ghost full" to={`/topics/${topic.id}/visualize`}>▶ Watch it run</Link>
               <Link className="button ghost full" to={`/topics/${topic.id}/practice`}>⌨ Practice problems</Link>
               <Link className="button ghost full" to={`/topics/${topic.id}/quiz`}>✓ Take the quiz</Link>
+              <Link className="button ghost full" to={`/topics/${topic.id}/cards`}>⧉ Review flashcards</Link>
             </section>
           </aside>
 
@@ -137,6 +140,8 @@ function Topic() {
       )}
 
       {tab === 'quiz' && <Quiz key={topic.id} topicId={topic.id} />}
+
+      {tab === 'cards' && <FlashcardDeck key={topic.id} topic={topic.id} />}
 
       <nav className="pager" aria-label="Topics">
         {previous ? (

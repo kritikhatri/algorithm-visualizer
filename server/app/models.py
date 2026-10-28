@@ -47,6 +47,20 @@ class ProblemProgress(Base):
     )
 
 
+class FlashcardProgress(Base):
+    """Leitner-box state for one learner and one card."""
+
+    __tablename__ = "flashcard_progress"
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    card_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    box: Mapped[int] = mapped_column(Integer, default=1)
+    due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    reviewed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
 class QuizAttempt(Base):
     __tablename__ = "quiz_attempts"
 

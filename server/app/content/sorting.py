@@ -215,6 +215,72 @@ merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]])
     return merged
 ''',
         },
+        {
+            'id': 'largest-number',
+            'title': 'Largest Number',
+            'difficulty': 'Medium',
+            "statement": """
+Arrange non-negative integers `nums` to form the largest possible number, returned as a **string**.
+
+**Example**
+
+```
+largest_number([3, 30, 34, 5, 9])  ->  "9534330"
+```
+""",
+            'function': 'largest_number',
+            'starter': 'def largest_number(nums):\n    pass\n',
+            'tests': [{'args': [[10, 2]], 'expected': '210'}, {'args': [[3, 30, 34, 5, 9]], 'expected': '9534330'}, {'args': [[0, 0]], 'expected': '0'}, {'args': [[1]], 'expected': '1'}],
+            'hints': ['Compare two numbers a, b as strings: which of a + b or b + a is bigger?', 'Use functools.cmp_to_key with that comparison. Watch out for all zeros.'],
+            'solution': r'''from functools import cmp_to_key
+
+
+def largest_number(nums):
+    words = [str(n) for n in nums]
+    words.sort(key=cmp_to_key(lambda a, b: (b + a > a + b) - (b + a < a + b)))
+    result = "".join(words)
+    return "0" if result[0] == "0" else result
+''',
+        },
+        {
+            'id': 'count-inversions',
+            'title': 'Count Inversions',
+            'difficulty': 'Hard',
+            "statement": """
+An inversion is a pair `i < j` with `nums[i] > nums[j]`. Count them in `O(n log n)` by adapting merge sort.
+
+**Example**
+
+```
+count_inversions([2, 4, 1, 3, 5])  ->  3   ((2,1), (4,1), (4,3))
+```
+""",
+            'function': 'count_inversions',
+            'starter': 'def count_inversions(nums):\n    pass\n',
+            'tests': [{'args': [[2, 4, 1, 3, 5]], 'expected': 3}, {'args': [[1, 2, 3]], 'expected': 0}, {'args': [[3, 2, 1]], 'expected': 3}, {'args': [[8, 4, 2, 1]], 'expected': 6}, {'args': [[]], 'expected': 0}],
+            'hints': ["While merging, if you take from the right half, it's smaller than everything left in the left half.", 'Add len(left) − i to the count each time that happens.'],
+            'solution': r'''def count_inversions(nums):
+    def sort(values):
+        if len(values) <= 1:
+            return values, 0
+        mid = len(values) // 2
+        left, a = sort(values[:mid])
+        right, b = sort(values[mid:])
+        merged, i, j, count = [], 0, 0, a + b
+        while i < len(left) and j < len(right):
+            if left[i] <= right[j]:
+                merged.append(left[i])
+                i += 1
+            else:
+                merged.append(right[j])
+                j += 1
+                count += len(left) - i
+        merged += left[i:] + right[j:]
+        return merged, count
+
+    return sort(nums)[1]
+''',
+        },
     ],
     "quiz": [
         {
@@ -262,5 +328,12 @@ merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]])
             "answer": 1,
             "explanation": "Important when sorting by several keys one after another.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Which simple sort is fast on nearly-sorted data?', 'back': 'Insertion sort: O(n) best case.'},
+        {'front': 'Merge sort time and space?', 'back': 'O(n log n) always; O(n) extra space; stable.'},
+        {'front': "Quick sort's worst case and why?", 'back': 'O(n²) when pivots split very unevenly (e.g. always the min or max).'},
+        {'front': "What does 'stable' mean for a sort?", 'back': 'Equal elements keep their original relative order.'},
+        {'front': "What does Python's sorted() use?", 'back': 'Timsort: O(n log n), stable, fast on partially sorted data.'},
     ],
 }

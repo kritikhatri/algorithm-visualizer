@@ -210,6 +210,69 @@ Return the middle node of the list. If there are two middle nodes, return the **
     return slow
 ''',
         },
+        {
+            'id': 'remove-nth-from-end',
+            'title': 'Remove Nth Node From End',
+            'difficulty': 'Medium',
+            "statement": """
+Remove the `n`-th node from the end of the list and return its head, in one pass.
+
+**Example**
+
+```
+remove_nth_from_end(1 → 2 → 3 → 4 → 5, 2)  ->  1 → 2 → 3 → 5
+```
+""",
+            'function': 'remove_nth_from_end',
+            'arg_types': ['linked_list', None],
+            'return_type': 'linked_list',
+            'starter': 'def remove_nth_from_end(head, n):\n    pass\n',
+            'tests': [{'args': [[1, 2, 3, 4, 5], 2], 'expected': [1, 2, 3, 5]}, {'args': [[1], 1], 'expected': []}, {'args': [[1, 2], 1], 'expected': [1]}, {'args': [[1, 2], 2], 'expected': [2]}],
+            'hints': ["Use a dummy node so removing the head isn't a special case.", 'Move `fast` n + 1 steps ahead, then move both until `fast` is None.'],
+            'solution': r'''def remove_nth_from_end(head, n):
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    for _ in range(n + 1):
+        fast = fast.next
+    while fast:
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next
+    return dummy.next
+''',
+        },
+        {
+            'id': 'add-two-numbers',
+            'title': 'Add Two Numbers',
+            'difficulty': 'Medium',
+            "statement": """
+Two non-negative integers are stored as linked lists of digits in **reverse** order (`342` is `2 → 4 → 3`). Return their sum as a list in the same format.
+
+**Example**
+
+```
+add_two_numbers(2 → 4 → 3, 5 → 6 → 4)  ->  7 → 0 → 8   (342 + 465 = 807)
+```
+""",
+            'function': 'add_two_numbers',
+            'arg_types': ['linked_list', 'linked_list'],
+            'return_type': 'linked_list',
+            'starter': 'def add_two_numbers(a, b):\n    pass\n',
+            'tests': [{'args': [[2, 4, 3], [5, 6, 4]], 'expected': [7, 0, 8]}, {'args': [[0], [0]], 'expected': [0]}, {'args': [[9, 9, 9, 9], [9, 9]], 'expected': [8, 9, 0, 0, 1]}],
+            'hints': ['Walk both lists together, like adding by hand from the ones digit.', 'Keep going while either list or the carry remains.'],
+            'solution': r'''def add_two_numbers(a, b):
+    dummy = tail = ListNode()
+    carry = 0
+    while a or b or carry:
+        total = carry + (a.val if a else 0) + (b.val if b else 0)
+        carry, digit = divmod(total, 10)
+        tail.next = ListNode(digit)
+        tail = tail.next
+        a = a.next if a else None
+        b = b.next if b else None
+    return dummy.next
+''',
+        },
     ],
     "quiz": [
         {
@@ -252,5 +315,12 @@ Return the middle node of the list. If there are two middle nodes, return the **
             "answer": 1,
             "explanation": "Inserting a new head is O(1); list.insert(0, x) is O(n).",
         },
+    ],
+    "flashcards": [
+        {'front': 'Time to access the k-th node of a linked list?', 'back': 'O(k): you must follow next pointers from the head.'},
+        {'front': 'Why use a dummy head node?', 'back': 'So inserting/removing at the head needs no special case; return dummy.next.'},
+        {'front': 'The 3 pointer moves to reverse a list?', 'back': 'nxt = curr.next; curr.next = prev; prev, curr = curr, nxt.'},
+        {'front': 'How do you find the middle in one pass?', 'back': 'slow moves 1 step, fast moves 2; when fast ends, slow is at the middle.'},
+        {'front': 'How do you detect a cycle?', 'back': "Floyd's tortoise and hare: if slow and fast pointers ever meet, there's a cycle."},
     ],
 }

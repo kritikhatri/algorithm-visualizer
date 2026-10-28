@@ -265,6 +265,95 @@ def shortest_path(grid):
     return -1
 ''',
         },
+        {
+            'id': 'rotting-oranges',
+            'title': 'Rotting Oranges',
+            'difficulty': 'Medium',
+            "statement": """
+In `grid`, `0` is empty, `1` a fresh orange and `2` a rotten one. Each minute, fresh oranges next to a rotten one (up/down/left/right) rot. Return the minutes until no fresh orange remains, or `-1` if that's impossible.
+
+**Example**
+
+```
+[[2, 1, 1],
+ [1, 1, 0],
+ [0, 1, 1]]   ->  4
+```
+""",
+            'function': 'oranges_rotting',
+            'starter': 'def oranges_rotting(grid):\n    pass\n',
+            'tests': [{'args': [[[2, 1, 1], [1, 1, 0], [0, 1, 1]]], 'expected': 4}, {'args': [[[2, 1, 1], [0, 1, 1], [1, 0, 1]]], 'expected': -1}, {'args': [[[0, 2]]], 'expected': 0}],
+            'hints': ['Multi-source BFS: start with ALL rotten oranges in the queue.', 'Process the queue level by level; each level is one minute.'],
+            'solution': r'''from collections import deque
+
+
+def oranges_rotting(grid):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque()
+    fresh = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 2:
+                queue.append((r, c))
+            elif grid[r][c] == 1:
+                fresh += 1
+
+    minutes = 0
+    while queue and fresh:
+        for _ in range(len(queue)):
+            r, c = queue.popleft()
+            for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:
+                    grid[nr][nc] = 2
+                    fresh -= 1
+                    queue.append((nr, nc))
+        minutes += 1
+    return -1 if fresh else minutes
+''',
+        },
+        {
+            'id': 'word-ladder',
+            'title': 'Word Ladder',
+            'difficulty': 'Hard',
+            "statement": """
+Transform `begin` into `end` changing one letter at a time; every intermediate word must be in `words`. Return the number of words in the shortest sequence (including both ends), or `0` if impossible.
+
+**Example**
+
+```
+ladder_length("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"])
+->  5   (hit → hot → dot → dog → cog)
+```
+""",
+            'function': 'ladder_length',
+            'starter': 'def ladder_length(begin, end, words):\n    pass\n',
+            'tests': [{'args': ['hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']], 'expected': 5}, {'args': ['hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log']], 'expected': 0}, {'args': ['a', 'c', ['a', 'b', 'c']], 'expected': 2}],
+            'hints': ['Each word is a node; words one letter apart are neighbours. BFS finds the shortest path.', "Group words by patterns like 'h*t' to find neighbours quickly."],
+            'solution': r'''from collections import defaultdict, deque
+
+
+def ladder_length(begin, end, words):
+    if end not in words:
+        return 0
+    patterns = defaultdict(list)
+    for word in words:
+        for i in range(len(word)):
+            patterns[word[:i] + "*" + word[i + 1:]].append(word)
+
+    queue = deque([(begin, 1)])
+    seen = {begin}
+    while queue:
+        word, steps = queue.popleft()
+        if word == end:
+            return steps
+        for i in range(len(word)):
+            for nxt in patterns[word[:i] + "*" + word[i + 1:]]:
+                if nxt not in seen:
+                    seen.add(nxt)
+                    queue.append((nxt, steps + 1))
+    return 0
+''',
+        },
     ],
     "quiz": [
         {
@@ -302,5 +391,12 @@ def shortest_path(grid):
             "answer": 1,
             "explanation": "A cycle means no node in it can come 'first'.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Most common way to store a graph in Python?', 'back': 'An adjacency list: dict mapping each node to a list of neighbours.'},
+        {'front': 'BFS uses a ___ and finds ___?', 'back': 'A queue; shortest paths in unweighted graphs.'},
+        {'front': 'DFS uses a ___?', 'back': 'A stack (or recursion), diving deep before backtracking.'},
+        {'front': 'BFS/DFS time with an adjacency list?', 'back': 'O(V + E).'},
+        {'front': 'Why mark nodes as seen when enqueuing?', 'back': 'To avoid adding the same node twice and looping forever on cycles.'},
     ],
 }

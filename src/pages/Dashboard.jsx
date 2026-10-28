@@ -6,6 +6,7 @@ function Dashboard() {
   const { user, progress, openAuth } = useAuth()
   const { data: topicData } = useApi('/topics')
   const { data: problemData } = useApi('/problems')
+  const { data: review } = useApi(user ? '/review' : null)
 
   if (!user) {
     return (
@@ -70,6 +71,24 @@ function Dashboard() {
             </div>
           ))}
         </section>
+
+        {review && (
+          <section className="card review-card">
+            <h2 className="card-title">Flashcards</h2>
+            <p className="review-due"><strong>{review.stats.due}</strong> due today</p>
+            <p className="muted">
+              {review.stats.seen} of {review.stats.total} cards learned · {review.stats.mastered} mastered
+            </p>
+            <div className="box-bar" aria-hidden="true">
+              {review.stats.boxes.map((count, i) => (
+                <span key={i} className={`box-${i + 1}`} style={{ flex: count || 0 }} />
+              ))}
+            </div>
+            <Link className="button primary small" to="/flashcards">
+              {review.stats.due ? 'Review now' : 'Learn new cards'} →
+            </Link>
+          </section>
+        )}
 
         <section className="card topics-progress">
           <h2 className="card-title">Topics</h2>

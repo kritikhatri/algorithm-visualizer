@@ -239,6 +239,92 @@ longest_common_subsequence("abc", "def")    ->  0
     return prev[-1]
 ''',
         },
+        {
+            'id': 'longest-increasing-subsequence',
+            'title': 'Longest Increasing Subsequence',
+            'difficulty': 'Medium',
+            "statement": """
+Return the length of the longest strictly increasing subsequence of `nums`.
+
+**Example**
+
+```
+length_of_lis([10, 9, 2, 5, 3, 7, 101, 18])  ->  4   ([2, 3, 7, 101])
+```
+""",
+            'function': 'length_of_lis',
+            'starter': 'def length_of_lis(nums):\n    pass\n',
+            'tests': [{'args': [[10, 9, 2, 5, 3, 7, 101, 18]], 'expected': 4}, {'args': [[0, 1, 0, 3, 2, 3]], 'expected': 4}, {'args': [[7, 7, 7]], 'expected': 1}],
+            'hints': ['O(n²) DP: dp[i] = 1 + max(dp[j]) for j < i with nums[j] < nums[i].', 'O(n log n): keep tails[k] = smallest tail of an increasing subsequence of length k + 1, and binary search it.'],
+            'solution': r'''import bisect
+
+
+def length_of_lis(nums):
+    tails = []
+    for num in nums:
+        i = bisect.bisect_left(tails, num)
+        if i == len(tails):
+            tails.append(num)
+        else:
+            tails[i] = num
+    return len(tails)
+''',
+        },
+        {
+            'id': 'word-break',
+            'title': 'Word Break',
+            'difficulty': 'Medium',
+            "statement": """
+Return `True` if `s` can be split into a sequence of one or more words from `words` (words may be reused).
+
+**Example**
+
+```
+word_break("leetcode", ["leet", "code"])  ->  True
+```
+""",
+            'function': 'word_break',
+            'starter': 'def word_break(s, words):\n    pass\n',
+            'tests': [{'args': ['leetcode', ['leet', 'code']], 'expected': True}, {'args': ['applepenapple', ['apple', 'pen']], 'expected': True}, {'args': ['catsandog', ['cats', 'dog', 'sand', 'and', 'cat']], 'expected': False}],
+            'hints': ['dp[i] = True if s[:i] can be segmented.', 'dp[i] is True if some dp[j] is True and s[j:i] is a word.'],
+            'solution': r'''def word_break(s, words):
+    vocab = set(words)
+    dp = [True] + [False] * len(s)
+    for i in range(1, len(s) + 1):
+        dp[i] = any(dp[j] and s[j:i] in vocab for j in range(i))
+    return dp[-1]
+''',
+        },
+        {
+            'id': 'edit-distance',
+            'title': 'Edit Distance',
+            'difficulty': 'Hard',
+            "statement": """
+Return the minimum number of single-character inserts, deletes or replacements needed to turn `a` into `b`.
+
+**Example**
+
+```
+min_distance("horse", "ros")  ->  3
+```
+""",
+            'function': 'min_distance',
+            'starter': 'def min_distance(a, b):\n    pass\n',
+            'tests': [{'args': ['horse', 'ros'], 'expected': 3}, {'args': ['intention', 'execution'], 'expected': 5}, {'args': ['', 'abc'], 'expected': 3}, {'args': ['same', 'same'], 'expected': 0}],
+            'hints': ['dp[i][j] = edits to turn a[:i] into b[:j]. Row/column 0 are i or j.', 'If the last letters match, dp[i][j] = dp[i−1][j−1]; else 1 + min(delete, insert, replace).'],
+            'solution': r'''def min_distance(a, b):
+    prev = list(range(len(b) + 1))
+    for i in range(1, len(a) + 1):
+        curr = [i] + [0] * len(b)
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                curr[j] = prev[j - 1]
+            else:
+                curr[j] = 1 + min(prev[j], curr[j - 1], prev[j - 1])
+        prev = curr
+    return prev[-1]
+''',
+        },
     ],
     "quiz": [
         {
@@ -291,5 +377,12 @@ longest_common_subsequence("abc", "def")    ->  0
             "answer": 1,
             "explanation": "One constant-time update per cell of an (n+1) × (m+1) table.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Two signs a problem needs DP?', 'back': 'Optimal substructure and overlapping subproblems.'},
+        {'front': 'Top-down vs bottom-up DP?', 'back': 'Top-down: recursion + cache. Bottom-up: fill a table from the smallest states.'},
+        {'front': 'The DP recipe?', 'back': 'Define the state, find the recurrence, set base cases, pick a fill order, read the answer.'},
+        {'front': 'LCS recurrence?', 'back': 'Match: dp[i−1][j−1] + 1. Otherwise: max(dp[i−1][j], dp[i][j−1]).'},
+        {'front': 'How to cut DP memory when a row only needs the previous row?', 'back': 'Keep just two rows (or a few variables) instead of the full table.'},
     ],
 }

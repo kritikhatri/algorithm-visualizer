@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
 from .config import JWT_SECRET
-from .routers import auth, content, progress
+from .routers import auth, content, flashcards, progress
 
 if not JWT_SECRET:
     raise RuntimeError("JWT_SECRET is not set. Add it to server/.env.")
@@ -35,6 +35,7 @@ def health():
 app.include_router(auth.router)
 app.include_router(content.router)
 app.include_router(progress.router)
+app.include_router(flashcards.router)
 
 # In production, serve the built React app from the same server.
 dist = Path(__file__).resolve().parents[2] / "dist"

@@ -249,6 +249,101 @@ def level_order(root):
     return levels
 ''',
         },
+        {
+            'id': 'diameter-of-binary-tree',
+            'title': 'Diameter of Binary Tree',
+            'difficulty': 'Easy',
+            "statement": """
+Return the length (number of **edges**) of the longest path between any two nodes. The path may or may not pass through the root.
+
+**Example**
+
+```
+[1, 2, 3, 4, 5]  ->  3   (4 → 2 → 1 → 3)
+```
+""",
+            'function': 'diameter_of_binary_tree',
+            'arg_types': ['tree'],
+            'starter': 'def diameter_of_binary_tree(root):\n    pass\n',
+            'tests': [{'args': [[1, 2, 3, 4, 5]], 'expected': 3}, {'args': [[1, 2]], 'expected': 1}, {'args': [[1]], 'expected': 0}],
+            'hints': ['The longest path through a node is depth(left) + depth(right).', 'Compute depths recursively and track the best sum on the side.'],
+            'solution': r'''def diameter_of_binary_tree(root):
+    best = 0
+
+    def depth(node):
+        nonlocal best
+        if node is None:
+            return 0
+        left, right = depth(node.left), depth(node.right)
+        best = max(best, left + right)
+        return 1 + max(left, right)
+
+    depth(root)
+    return best
+''',
+        },
+        {
+            'id': 'kth-smallest-in-bst',
+            'title': 'Kth Smallest Element in a BST',
+            'difficulty': 'Medium',
+            "statement": """
+Return the `k`-th smallest value (1-indexed) in a binary search tree.
+
+**Example**
+
+```
+[3, 1, 4, None, 2], k = 1  ->  1
+```
+""",
+            'function': 'kth_smallest',
+            'arg_types': ['tree', None],
+            'starter': 'def kth_smallest(root, k):\n    pass\n',
+            'tests': [{'args': [[3, 1, 4, None, 2], 1], 'expected': 1}, {'args': [[5, 3, 6, 2, 4, None, None, 1], 3], 'expected': 3}, {'args': [[2, 1, 3], 3], 'expected': 3}],
+            'hints': ['In-order traversal of a BST visits values in sorted order.', "Stop as soon as you've visited k nodes."],
+            'solution': r'''def kth_smallest(root, k):
+    stack = []
+    node = root
+    while stack or node:
+        while node:
+            stack.append(node)
+            node = node.left
+        node = stack.pop()
+        k -= 1
+        if k == 0:
+            return node.val
+        node = node.right
+''',
+        },
+        {
+            'id': 'lca-of-bst',
+            'title': 'Lowest Common Ancestor of a BST',
+            'difficulty': 'Medium',
+            "statement": """
+Given a BST and two values `p` and `q` that are both in it, return the **value** of their lowest common ancestor: the deepest node that has both as descendants (a node counts as its own descendant).
+
+**Example**
+
+```
+[6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], p = 2, q = 8  ->  6
+[6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], p = 2, q = 4  ->  2
+```
+""",
+            'function': 'lowest_common_ancestor',
+            'arg_types': ['tree', None, None],
+            'starter': 'def lowest_common_ancestor(root, p, q):\n    pass\n',
+            'tests': [{'args': [[6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], 2, 8], 'expected': 6}, {'args': [[6, 2, 8, 0, 4, 7, 9, None, None, 3, 5], 2, 4], 'expected': 2}, {'args': [[2, 1], 2, 1], 'expected': 2}],
+            'hints': ['If both values are smaller than the node, the answer is in the left subtree; if both larger, the right.', 'Otherwise they split here, so this node is the LCA.'],
+            'solution': r'''def lowest_common_ancestor(root, p, q):
+    node = root
+    while node:
+        if p < node.val and q < node.val:
+            node = node.left
+        elif p > node.val and q > node.val:
+            node = node.right
+        else:
+            return node.val
+''',
+        },
     ],
     "quiz": [
         {
@@ -281,5 +376,12 @@ def level_order(root):
             "answer": 1,
             "explanation": "The base case height(None) = 0 makes the recursion work.",
         },
+    ],
+    "flashcards": [
+        {'front': 'In-order traversal of a BST gives…?', 'back': 'The values in sorted order.'},
+        {'front': 'BST rule?', 'back': 'Everything in the left subtree < node < everything in the right subtree.'},
+        {'front': 'BST search cost, balanced vs skewed?', 'back': 'O(log n) balanced; O(n) when it degenerates into a line.'},
+        {'front': 'Recursive height of a tree?', 'back': 'height(None) = 0; height(node) = 1 + max(height(left), height(right)).'},
+        {'front': 'Which structure does level-order traversal use?', 'back': 'A queue (BFS), processing len(queue) nodes per level.'},
     ],
 }

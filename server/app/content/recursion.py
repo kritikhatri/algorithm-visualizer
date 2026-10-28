@@ -214,6 +214,81 @@ permute([1, 2, 3])
     return result
 ''',
         },
+        {
+            'id': 'combination-sum',
+            'title': 'Combination Sum',
+            'difficulty': 'Medium',
+            "statement": """
+Return all unique combinations of `candidates` (distinct positive integers) that sum to `target`. Each number may be used any number of times. Order doesn't matter.
+
+**Example**
+
+```
+combination_sum([2, 3, 6, 7], 7)  ->  [[2, 2, 3], [7]]
+```
+""",
+            'function': 'combination_sum',
+            'compare': 'unordered_nested',
+            'starter': 'def combination_sum(candidates, target):\n    pass\n',
+            'tests': [{'args': [[2, 3, 6, 7], 7], 'expected': [[2, 2, 3], [7]]}, {'args': [[2, 3, 5], 8], 'expected': [[2, 2, 2, 2], [2, 3, 3], [3, 5]]}, {'args': [[2], 1], 'expected': []}],
+            'hints': ["Backtrack with a start index so combinations aren't repeated in a different order.", 'Recurse with the SAME index to allow reusing a number.'],
+            'solution': r'''def combination_sum(candidates, target):
+    result = []
+
+    def backtrack(start, remaining, path):
+        if remaining == 0:
+            result.append(path[:])
+            return
+        for i in range(start, len(candidates)):
+            if candidates[i] <= remaining:
+                path.append(candidates[i])
+                backtrack(i, remaining - candidates[i], path)
+                path.pop()
+
+    backtrack(0, target, [])
+    return result
+''',
+        },
+        {
+            'id': 'n-queens',
+            'title': 'N-Queens (count)',
+            'difficulty': 'Hard',
+            "statement": """
+Place `n` queens on an `n × n` chessboard so none attack each other (no shared row, column or diagonal). Return how many distinct arrangements exist.
+
+**Example**
+
+```
+total_n_queens(4)  ->  2
+total_n_queens(8)  ->  92
+```
+""",
+            'function': 'total_n_queens',
+            'starter': 'def total_n_queens(n):\n    pass\n',
+            'tests': [{'args': [1], 'expected': 1}, {'args': [4], 'expected': 2}, {'args': [5], 'expected': 10}, {'args': [6], 'expected': 4}, {'args': [8], 'expected': 92}],
+            'hints': ['Place one queen per row, trying each column.', 'Cells on the same diagonal share row − col; on the same anti-diagonal they share row + col.'],
+            'solution': r'''def total_n_queens(n):
+    cols, diagonals, anti_diagonals = set(), set(), set()
+
+    def place(row):
+        if row == n:
+            return 1
+        count = 0
+        for col in range(n):
+            if col in cols or row - col in diagonals or row + col in anti_diagonals:
+                continue
+            cols.add(col)
+            diagonals.add(row - col)
+            anti_diagonals.add(row + col)
+            count += place(row + 1)
+            cols.remove(col)
+            diagonals.remove(row - col)
+            anti_diagonals.remove(row + col)
+        return count
+
+    return place(0)
+''',
+        },
     ],
     "quiz": [
         {
@@ -261,5 +336,12 @@ permute([1, 2, 3])
             "answer": 2,
             "explanation": "Each element is independently in or out: 2 × 2 × … × 2.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Two parts every recursive function needs?', 'back': 'A base case that stops, and a recursive case that shrinks the problem.'},
+        {'front': 'Space cost of recursion depth d?', 'back': 'O(d): each pending call keeps a frame on the call stack.'},
+        {'front': 'What is memoization?', 'back': 'Caching results of calls so each subproblem is solved once (e.g. @functools.cache).'},
+        {'front': 'The backtracking pattern?', 'back': 'Choose → explore (recurse) → un-choose (undo) for every option.'},
+        {'front': 'Number of subsets / permutations of n items?', 'back': '2ⁿ subsets; n! permutations.'},
     ],
 }

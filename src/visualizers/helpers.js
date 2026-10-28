@@ -101,3 +101,20 @@ export function parseNumbers(text, { maxLength = 12, min = -99, max = 99 } = {})
 export function randomInts(count, min = 1, max = 99) {
   return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min)
 }
+
+// Lay out one or more general trees: leaves get consecutive x slots and
+// each parent is centred over its children.
+export function layoutTree(roots, childrenOf, gapX = 52, gapY = 70) {
+  const positions = {}
+  let leaf = 0
+  function place(id, depth) {
+    const kids = childrenOf(id)
+    kids.forEach((kid) => place(kid, depth + 1))
+    const x = kids.length
+      ? kids.reduce((sum, kid) => sum + positions[kid].x, 0) / kids.length
+      : leaf++ * gapX
+    positions[id] = { x, y: depth * gapY }
+  }
+  roots.forEach((root) => place(root, 0))
+  return positions
+}

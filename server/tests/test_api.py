@@ -4,7 +4,7 @@ def test_health(client):
 
 def test_topics_and_problems(client):
     topics = client.get("/api/topics").json()["topics"]
-    assert len(topics) == 12
+    assert len(topics) == 18
 
     topic = client.get("/api/topics/arrays").json()["topic"]
     assert topic["problems"][0]["id"] == "pair-sum-sorted"
@@ -80,3 +80,25 @@ def test_topic_and_problem_progress(client, auth_headers):
 
     client.delete("/api/progress/topics/arrays", headers=auth_headers)
     assert client.get("/api/progress", headers=auth_headers).json()["completedTopics"] == []
+
+
+def test_flashcards_are_public(client):
+    cards = client.get("/api/flashcards?topic=heaps").json()["cards"]
+    assert cards[0]["id"] == "heaps:0"
+    assert client.get("/api/flashcards?topic=nope").status_code == 404
+
+
+def test_review_moves_cards_between_boxes(client, auth_headers):
+    queue = client.get("/api/review?topic=heaps", headers=auth_headers).json()
+    assert queue["due"] == [] and len(queue["new"]) == 5
+
+    assert client.post("/api/review/heaps:0", json={"correct": True}, headers=auth_headers).json()["box"] == 1
+    assert client.post("/api/review/heaps:0", json={"correct": True}, headers=auth_headers).json()["box"] == 2
+    assert client.post("/api/review/heaps:0", json={"correct": False}, headers=auth_headers).json()["box"] == 1
+
+    queue = client.get("/api/review?topic=heaps", headers=auth_headers).json()
+    assert len(queue["new"]) == 4
+    assert queue["stats"]["seen"] == 1 and queue["stats"]["boxes"][0] == 1
+
+    assert client.post("/api/review/nope:1", json={"correct": True}, headers=auth_headers).status_code == 404
+    assert client.get("/api/review").status_code == 401

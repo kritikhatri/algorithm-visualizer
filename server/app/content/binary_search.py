@@ -198,6 +198,71 @@ find_min([11, 13, 15, 17]) ->  11
     return nums[lo]
 ''',
         },
+        {
+            'id': 'search-rotated-array',
+            'title': 'Search in Rotated Sorted Array',
+            'difficulty': 'Medium',
+            "statement": """
+A sorted list of distinct numbers was rotated at an unknown index. Return the index of `target`, or `-1`, in `O(log n)`.
+
+**Example**
+
+```
+search_rotated([4, 5, 6, 7, 0, 1, 2], 0)  ->  4
+```
+""",
+            'function': 'search_rotated',
+            'starter': 'def search_rotated(nums, target):\n    pass\n',
+            'tests': [{'args': [[4, 5, 6, 7, 0, 1, 2], 0], 'expected': 4}, {'args': [[4, 5, 6, 7, 0, 1, 2], 3], 'expected': -1}, {'args': [[1], 0], 'expected': -1}, {'args': [[5, 1, 3], 5], 'expected': 0}, {'args': [[3, 1], 1], 'expected': 1}],
+            'hints': ['At any mid, at least one half (left or right) is properly sorted.', 'Check whether the target lies inside the sorted half; if not, search the other half.'],
+            'solution': r'''def search_rotated(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] <= nums[mid]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+''',
+        },
+        {
+            'id': 'koko-eating-bananas',
+            'title': 'Koko Eating Bananas',
+            'difficulty': 'Medium',
+            "statement": """
+Koko eats from one pile per hour, at most `k` bananas per hour (if a pile has fewer, she finishes it and waits). Return the minimum integer `k` that lets her eat all `piles` within `h` hours.
+
+**Example**
+
+```
+min_eating_speed([3, 6, 7, 11], 8)  ->  4
+```
+""",
+            'function': 'min_eating_speed',
+            'starter': 'def min_eating_speed(piles, h):\n    pass\n',
+            'tests': [{'args': [[3, 6, 7, 11], 8], 'expected': 4}, {'args': [[30, 11, 23, 4, 20], 5], 'expected': 30}, {'args': [[30, 11, 23, 4, 20], 6], 'expected': 23}, {'args': [[1], 1], 'expected': 1}],
+            'hints': ['Binary search on the answer k between 1 and max(piles).', 'Hours needed at speed k: sum of ceil(pile / k). Is it ≤ h?'],
+            'solution': r'''def min_eating_speed(piles, h):
+    lo, hi = 1, max(piles)
+    while lo < hi:
+        k = (lo + hi) // 2
+        hours = sum((pile + k - 1) // k for pile in piles)
+        if hours <= h:
+            hi = k
+        else:
+            lo = k + 1
+    return lo
+''',
+        },
     ],
     "quiz": [
         {
@@ -235,5 +300,12 @@ find_min([11, 13, 15, 17]) ->  11
             "answer": 1,
             "explanation": "bisect_left, bisect_right and insort work on sorted lists.",
         },
+    ],
+    "flashcards": [
+        {'front': 'Requirement for binary search?', 'back': 'Sorted data, or any yes/no condition that is monotonic (no…no yes…yes).'},
+        {'front': 'Binary search time complexity?', 'back': 'O(log n): the range halves every step.'},
+        {'front': 'Classic off-by-one rule for lo <= hi?', 'back': 'Search [lo, hi] inclusive: move lo = mid + 1 or hi = mid − 1.'},
+        {'front': 'Where does lo end if the target is missing?', 'back': 'At the index where the target would be inserted.'},
+        {'front': "What is 'binary search on the answer'?", 'back': 'Search over possible answers (e.g. speed, capacity) using a feasibility check.'},
     ],
 }

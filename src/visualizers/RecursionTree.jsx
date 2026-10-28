@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { GraphView, PlayerControls, VizLayout } from './common'
-import { useStepPlayer } from './helpers'
+import { layoutTree, useStepPlayer } from './helpers'
 
 const PLAIN = `def fib(n):
     if n < 2:
@@ -76,22 +76,10 @@ function fibSteps(n, memoize) {
   return { nodes, frames }
 }
 
-// Leaves get consecutive x positions; parents sit centred above their children.
 function layout(nodes) {
   const children = {}
   nodes.forEach((node) => node.parent !== null && (children[node.parent] ??= []).push(node.id))
-  const positions = {}
-  let leaf = 0
-  function place(id, depth) {
-    const kids = children[id] ?? []
-    kids.forEach((kid) => place(kid, depth + 1))
-    const x = kids.length
-      ? kids.reduce((sum, kid) => sum + positions[kid].x, 0) / kids.length
-      : leaf++ * 52
-    positions[id] = { x, y: depth * 70 }
-  }
-  place(0, 0)
-  return positions
+  return layoutTree([0], (id) => children[id] ?? [])
 }
 
 function RecursionTree() {

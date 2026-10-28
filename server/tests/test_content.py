@@ -49,6 +49,9 @@ def test_topic_shape(topic):
     for item in topic["quiz"]:
         assert 0 <= item["answer"] < len(item["options"])
         assert item["explanation"]
+    assert len(topic["flashcards"]) >= 5
+    for card in topic["flashcards"]:
+        assert card["front"] and card["back"]
 
 
 @pytest.mark.parametrize("problem", PROBLEMS, ids=lambda p: p["id"])

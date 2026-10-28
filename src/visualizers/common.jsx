@@ -185,6 +185,22 @@ export function GraphView({ nodes, edges, directed = false, height = 320, onNode
           />
         )
       })}
+      {edges.map((edge) => {
+        const a = byId[edge.from]
+        const b = byId[edge.to]
+        if (edge.label === undefined || !a || !b) return null
+        return (
+          <text
+            key={`label-${edge.from}-${edge.to}`}
+            className={`edge-label ${edge.state ?? ''}`}
+            x={(a.x + b.x) / 2}
+            y={(a.y + b.y) / 2}
+            dy="-0.4em"
+          >
+            {edge.label}
+          </text>
+        )
+      })}
       {nodes.map((node) => (
         <g
           key={node.id}
