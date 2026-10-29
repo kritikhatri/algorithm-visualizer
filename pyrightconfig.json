@@ -1,0 +1,6 @@
+{
+  "venvPath": "server",
+  "venv": ".venv",
+  "extraPaths": ["server"],
+  "exclude": ["node_modules", "dist", "server/.venv"]
+}

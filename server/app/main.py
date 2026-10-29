@@ -16,12 +16,12 @@ app = FastAPI(title="DSA Study Lab API")
 
 
 @app.exception_handler(HTTPException)
-async def http_error(_request: Request, exc: HTTPException):
+async def http_error(_: Request, exc: HTTPException):
     return JSONResponse({"error": exc.detail}, status_code=exc.status_code)
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_error(_request: Request, exc: RequestValidationError):
+async def validation_error(_: Request, exc: RequestValidationError):
     first = exc.errors()[0]
     field = ".".join(str(part) for part in first["loc"][1:]) or "request"
     return JSONResponse({"error": f"Invalid {field}: {first['msg']}"}, status_code=400)
