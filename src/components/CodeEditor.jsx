@@ -9,7 +9,7 @@ const theme = EditorView.theme({
   '.cm-gutters': { backgroundColor: 'transparent', border: 'none' },
   '.cm-scroller': { fontFamily: 'var(--mono)', lineHeight: '1.6' },
   '.cm-step-line': {
-    backgroundColor: 'rgba(255, 79, 163, 0.16)',
+    backgroundColor: 'rgba(232, 67, 111, 0.16)',
     boxShadow: 'inset 3px 0 0 var(--pink)',
   },
 })

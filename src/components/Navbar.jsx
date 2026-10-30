@@ -6,6 +6,8 @@ const links = [
   { to: '/problems', label: 'Problems' },
   { to: '/flashcards', label: 'Flashcards' },
   { to: '/playground', label: 'Playground' },
+  { to: '/race', label: 'Race' },
+  { to: '/cheatsheet', label: 'Cheat sheet' },
   { to: '/dashboard', label: 'Progress' },
 ]
 

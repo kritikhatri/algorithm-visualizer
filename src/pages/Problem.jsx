@@ -95,7 +95,15 @@ function Workspace({ problem }) {
       : '▶ Run tests'
 
   return (
-    <div className="workspace">
+    <div
+      className="workspace"
+      onKeyDown={(event) => {
+        if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && !running) {
+          event.preventDefault()
+          handleRun()
+        }
+      }}
+    >
       <section className="card statement">
         <Link to={`/topics/${problem.topic}/practice`} className="back-link">← Back to topic</Link>
         <div className="statement-head">

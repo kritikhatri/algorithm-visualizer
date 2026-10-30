@@ -14,8 +14,8 @@ router = APIRouter(prefix="/api", tags=["flashcards"])
 
 # Leitner system: a correct answer moves a card up a box, a miss sends it back to box 1.
 # Higher boxes are reviewed less often.
-MAX_BOX = 5
-INTERVAL_DAYS = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16}
+MAX_BOX = 4
+INTERVAL_DAYS = {1: 1, 2: 3, 3: 7, 4: 14}
 NEW_CARDS_PER_SESSION = 10
 
 

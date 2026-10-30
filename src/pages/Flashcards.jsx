@@ -14,7 +14,7 @@ function Flashcards() {
         <h1>Flashcards</h1>
         <p className="subtitle left">
           Recall beats re-reading. Cards you miss come back tomorrow; cards you know are spaced
-          further apart (1, 2, 4, 8, then 16 days).
+          further apart (1, 3, 7, then 14 days).
         </p>
       </header>
 

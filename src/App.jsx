@@ -11,6 +11,8 @@ import Problems from './pages/Problems'
 import Problem from './pages/Problem'
 import Playground from './pages/Playground'
 import Flashcards from './pages/Flashcards'
+import Race from './pages/Race'
+import CheatSheet from './pages/CheatSheet'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
 
@@ -26,7 +28,9 @@ function App() {
     <div className="app">
       <Navbar />
 
-      <main className="page">
+      <div className="aurora" aria-hidden="true"><i /><i /><i /></div>
+
+      <main className="page" key={pathname}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/topics/:topicId" element={<Topic />} />
@@ -35,6 +39,8 @@ function App() {
           <Route path="/problems/:problemId" element={<Problem />} />
           <Route path="/playground" element={<Playground />} />
           <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/race" element={<Race />} />
+          <Route path="/cheatsheet" element={<CheatSheet />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -52,6 +52,16 @@ def get_topic(topic_id: str):
     }
 
 
+@router.get("/cheatsheet")
+def cheatsheet():
+    return {
+        "topics": [
+            {"id": topic["id"], "title": topic["title"], "complexity": topic["complexity"]}
+            for topic in TOPICS
+        ]
+    }
+
+
 @router.get("/problems")
 def list_problems():
     return {"problems": [problem_summary(problem) for problem in PROBLEMS]}

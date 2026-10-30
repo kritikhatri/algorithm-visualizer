@@ -3,7 +3,7 @@ import { api } from '../api'
 import { useAuth } from '../auth'
 import { useApi } from '../useApi'
 
-const BOX_LABELS = ['New', 'Box 1', 'Box 2', 'Box 3', 'Box 4', 'Mastered']
+const BOX_LABELS = ['New', 'Box 1', 'Box 2', 'Box 3', 'Mastered']
 
 // Logged-in learners get a scheduled queue (due cards, then new ones) and their
 // answers move cards between Leitner boxes. Guests can still flip through every card.

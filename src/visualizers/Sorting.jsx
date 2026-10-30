@@ -1,22 +1,16 @@
 import { useMemo, useState } from 'react'
 import { sortingAlgorithms } from './sortingSteps'
 import { ArrayBars, NumberListInput, PlayerControls, VizLayout } from './common'
-import { randomInts, useStepPlayer } from './helpers'
+import { useStepPlayer } from './helpers'
 
 function Sorting() {
   const [algorithm, setAlgorithm] = useState('bubble')
   const [values, setValues] = useState([42, 17, 88, 23, 65, 9, 54, 31])
-  const [inputKey, setInputKey] = useState(0)
 
   const { code, steps } = sortingAlgorithms[algorithm]
   const frames = useMemo(() => steps(values), [steps, values])
   const player = useStepPlayer(frames)
   const { frame } = player
-
-  function randomize() {
-    setValues(randomInts(8, 5, 99))
-    setInputKey((key) => key + 1)
-  }
 
   return (
     <VizLayout
@@ -34,8 +28,7 @@ function Sorting() {
               </button>
             ))}
           </div>
-          <NumberListInput key={inputKey} initial={values} onSubmit={setValues} maxLength={12} min={1} max={99} />
-          <button className="button ghost small" onClick={randomize}>⚄ Random</button>
+          <NumberListInput initial={values} onSubmit={setValues} maxLength={12} min={1} max={99} />
           <div className="stat-chips">
             <span>Comparisons <strong>{frame.comparisons}</strong></span>
             <span>Swaps / writes <strong>{frame.swaps}</strong></span>

@@ -102,3 +102,8 @@ def test_review_moves_cards_between_boxes(client, auth_headers):
 
     assert client.post("/api/review/nope:1", json={"correct": True}, headers=auth_headers).status_code == 404
     assert client.get("/api/review").status_code == 401
+
+
+def test_cheatsheet(client):
+    topics = client.get("/api/cheatsheet").json()["topics"]
+    assert len(topics) == 18 and topics[0]["complexity"]

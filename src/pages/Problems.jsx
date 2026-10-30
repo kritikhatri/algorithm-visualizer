@@ -13,16 +13,18 @@ function Problems() {
   const [query, setQuery] = useState('')
   const [topic, setTopic] = useState('all')
   const [level, setLevel] = useState('All')
-  const [hideSolved, setHideSolved] = useState(false)
+  const [status, setStatus] = useState('all')
 
   const solved = new Set(progress?.solvedProblems)
+  const attempted = new Set(progress?.attemptedProblems)
+  const statusOf = (id) => (solved.has(id) ? 'solved' : attempted.has(id) ? 'attempted' : 'unsolved')
   const topicTitle = Object.fromEntries((topicData?.topics ?? []).map((t) => [t.id, t.title]))
   const problems = (problemData?.problems ?? []).filter(
     (problem) =>
       problem.title.toLowerCase().includes(query.trim().toLowerCase()) &&
       (topic === 'all' || problem.topic === topic) &&
       (level === 'All' || problem.difficulty === level) &&
-      !(hideSolved && solved.has(problem.id))
+      (status === 'all' || statusOf(problem.id) === status)
   )
 
   return (
@@ -62,10 +64,12 @@ function Problems() {
           ))}
         </div>
         {progress && (
-          <label className="checkbox">
-            <input type="checkbox" checked={hideSolved} onChange={(event) => setHideSolved(event.target.checked)} />
-            Hide solved
-          </label>
+          <select aria-label="Status" value={status} onChange={(event) => setStatus(event.target.value)}>
+            <option value="all">Any status</option>
+            <option value="solved">Solved</option>
+            <option value="attempted">Attempted</option>
+            <option value="unsolved">Unsolved</option>
+          </select>
         )}
       </div>
 

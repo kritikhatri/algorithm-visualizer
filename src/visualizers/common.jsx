@@ -1,10 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CodeEditor from '../components/CodeEditor'
 import { pyRepr } from '../utils/format'
-import { Raw, parseNumbers, stateOf } from './helpers'
+import { Raw, parseNumbers, randomInts, stateOf } from './helpers'
 
 export function PlayerControls({ player }) {
-  if (player.total <= 1) return null
+  const { step, total } = player
+
+  useEffect(() => {
+    if (total <= 1) return
+    function handleKey(event) {
+      if (event.target.closest('input, select, textarea, .cm-editor')) return
+      if (event.key === 'ArrowLeft') step(-1)
+      if (event.key === 'ArrowRight') step(1)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [step, total])
+
+  if (total <= 1) return null
 
   const label = player.finished && player.total > 1
     ? '↻ Replay'
@@ -20,6 +33,7 @@ export function PlayerControls({ player }) {
         <button className="button ghost icon" onClick={() => player.step(-1)} disabled={player.index === 0} aria-label="Previous step">←</button>
         <button className="button primary play" onClick={player.toggle}>{label}</button>
         <button className="button ghost icon" onClick={() => player.step(1)} disabled={player.finished} aria-label="Next step">→</button>
+        <button className="button ghost icon" onClick={player.reset} disabled={player.index === 0} aria-label="Restart">⟲</button>
         <span className="step-pill">{player.index + 1} / {player.total}</span>
       </div>
 
@@ -239,6 +253,18 @@ export function NumberListInput({ initial, onSubmit, label = 'Values', maxLength
         <input value={text} onChange={(event) => setText(event.target.value)} />
       </label>
       <button className="button ghost small" type="submit">{buttonLabel}</button>
+      <button
+        className="button ghost small"
+        type="button"
+        onClick={() => {
+          const values = randomInts(initial.length, Math.max(min ?? 1, 1), Math.min(max ?? 99, 99))
+          setText(values.join(', '))
+          setError('')
+          onSubmit(values)
+        }}
+      >
+        ⚄ Randomise
+      </button>
       {error && <span className="error-text">{error}</span>}
     </form>
   )

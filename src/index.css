@@ -1,24 +1,24 @@
 :root {
-  --bg: #0b0a12;
-  --surface: rgba(24, 21, 36, 0.72);
-  --surface-solid: #15121f;
-  --surface-raised: #221d33;
+  --bg: #18060d;
+  --surface: rgba(46, 14, 27, 0.72);
+  --surface-solid: #260b16;
+  --surface-raised: #43142a;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
 
-  --text: #f4f1fa;
-  --muted: #a39cb5;
+  --text: #fbf1f3;
+  --muted: #c4a4af;
 
-  --pink: #ff4fa3;
-  --purple: #8b5cf6;
+  --pink: #ef476f;
+  --purple: #9b1c45;
   --gradient: linear-gradient(135deg, var(--pink), var(--purple));
 
   /* Visualizer states */
   --state-comparing: #fbbf24;
-  --state-swapping: #ff4fa3;
+  --state-swapping: #ef476f;
   --state-sorted: #34d399;
-  --state-pivot: #a78bfa;
-  --state-found: #38bdf8;
+  --state-pivot: #e58aa8;
+  --state-found: #5eead4;
   --red: #f87171;
 
   /* Chart categorical slots (validated for this dark surface) */
@@ -56,8 +56,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(60rem 30rem at 15% -10%, rgba(139, 92, 246, 0.22), transparent 60%),
-    radial-gradient(50rem 28rem at 90% 0%, rgba(255, 79, 163, 0.16), transparent 60%),
+    radial-gradient(60rem 30rem at 15% -10%, rgba(176, 38, 84, 0.22), transparent 60%),
+    radial-gradient(50rem 28rem at 90% 0%, rgba(232, 67, 111, 0.16), transparent 60%),
     var(--bg);
   background-attachment: fixed;
 }
