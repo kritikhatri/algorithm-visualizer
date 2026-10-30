@@ -115,6 +115,17 @@ function Workspace({ problem }) {
 
         <Markdown source={problem.statement} />
 
+        {problem.leetcode && (
+          <a
+            className="back-link"
+            href={`https://leetcode.com/problems/${problem.leetcode}/`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Similar problem on LeetCode ↗
+          </a>
+        )}
+
         <div className="hints">
           {problem.hints.slice(0, hintsShown).map((hint, i) => (
             <p className="hint" key={i}><strong>Hint {i + 1}:</strong> {hint}</p>

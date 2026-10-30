@@ -20,6 +20,7 @@ from . import (
     tries,
     union_find,
 )
+from .leetcode import LEETCODE_SLUGS
 
 TOPICS = [
     module.TOPIC
@@ -50,6 +51,7 @@ TOPICS_BY_ID = {topic["id"]: topic for topic in TOPICS}
 for topic in TOPICS:
     for problem in topic["problems"]:
         problem["topic"] = topic["id"]
+        problem["leetcode"] = LEETCODE_SLUGS.get(problem["id"])
 
 PROBLEMS = [problem for topic in TOPICS for problem in topic["problems"]]
 

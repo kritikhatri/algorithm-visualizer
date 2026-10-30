@@ -79,3 +79,10 @@ def test_harness_reports_errors():
     problem = PROBLEMS[0]
     assert "SyntaxError" in run("def oops(:\n", problem)["error"]
     assert "Define" in run("x = 1\n", problem)["error"]
+
+
+def test_leetcode_links_point_at_real_problems():
+    from app.content.leetcode import LEETCODE_SLUGS
+
+    known = {p["id"] for p in PROBLEMS}
+    assert set(LEETCODE_SLUGS) <= known

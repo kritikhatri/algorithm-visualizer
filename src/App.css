@@ -2267,3 +2267,36 @@ button.cell:hover { border-color: var(--pink); }
 .pattern-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
 .pattern-options .option { justify-content: center; background: none; font-weight: 600; }
 .patterns .quiz-actions { margin-top: 12px; }
+
+/* ---------- Glossary tooltips ---------- */
+
+.term {
+  position: relative;
+  border-bottom: 1px dotted var(--pink);
+  text-decoration: none;
+  cursor: help;
+}
+
+.term:hover::after,
+.term:focus::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 6;
+  width: 240px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface-solid);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+/* Keep long complexity entries inside the lesson sidebar. */
+.learn-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); }
+.learn-side, .learn-side .card { min-width: 0; }
+.complexity-table code { white-space: normal; }
