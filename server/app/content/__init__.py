@@ -20,6 +20,7 @@ from . import (
     tries,
     union_find,
 )
+from .explanations import EXPLANATIONS
 from .leetcode import LEETCODE_SLUGS
 
 TOPICS = [
@@ -52,6 +53,15 @@ for topic in TOPICS:
     for problem in topic["problems"]:
         problem["topic"] = topic["id"]
         problem["leetcode"] = LEETCODE_SLUGS.get(problem["id"])
+        brute, brute_cost, optimal, time, space, pseudocode = EXPLANATIONS[problem["id"]]
+        problem["explanation"] = {
+            "brute": brute,
+            "bruteCost": brute_cost,
+            "optimal": optimal,
+            "time": time,
+            "space": space,
+            "pseudocode": pseudocode,
+        }
 
 PROBLEMS = [problem for topic in TOPICS for problem in topic["problems"]]
 

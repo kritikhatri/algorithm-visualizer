@@ -86,3 +86,9 @@ def test_leetcode_links_point_at_real_problems():
 
     known = {p["id"] for p in PROBLEMS}
     assert set(LEETCODE_SLUGS) <= known
+
+
+def test_every_problem_has_an_explanation():
+    from app.content.explanations import EXPLANATIONS
+
+    assert set(EXPLANATIONS) == {p["id"] for p in PROBLEMS}

@@ -29,6 +29,11 @@ function writeDraft(id, code) {
   }
 }
 
+// Hints use `backticks` for code.
+function withCode(text) {
+  return text.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part))
+}
+
 function Problem() {
   const { problemId } = useParams()
   const { data, error } = useApi(`/problems/${problemId}`)
@@ -50,6 +55,7 @@ function Workspace({ problem }) {
   const [showSolution, setShowSolution] = useState(false)
 
   const solved = progress?.solvedProblems.includes(problem.id)
+  const { explanation } = problem
 
   useEffect(() => {
     loadPython().catch(() => {})
@@ -128,11 +134,19 @@ function Workspace({ problem }) {
 
         <div className="hints">
           {problem.hints.slice(0, hintsShown).map((hint, i) => (
-            <p className="hint" key={i}><strong>Hint {i + 1}:</strong> {hint}</p>
+            <p className="hint" key={i}><strong>Hint {i + 1}:</strong> {withCode(hint)}</p>
           ))}
-          {hintsShown < problem.hints.length && (
+          {hintsShown > problem.hints.length && (
+            <div className="hint">
+              <strong>Pseudocode:</strong>
+              <pre>{explanation.pseudocode}</pre>
+            </div>
+          )}
+          {hintsShown <= problem.hints.length && (
             <button className="button ghost small" onClick={() => setHintsShown(hintsShown + 1)}>
-              💡 Show {hintsShown ? 'another' : 'a'} hint
+              {hintsShown < problem.hints.length
+                ? `💡 Show hint ${hintsShown + 1} of ${problem.hints.length}`
+                : 'Show pseudocode'}
             </button>
           )}
         </div>
@@ -140,12 +154,18 @@ function Workspace({ problem }) {
         <div className="solution">
           {showSolution ? (
             <>
-              <h2 className="card-title">Reference solution</h2>
+              <h2 className="card-title">Brute force</h2>
+              <p className="muted">{explanation.brute} <code>{explanation.bruteCost}</code></p>
+              <h2 className="card-title spaced">Optimized</h2>
+              <p>{explanation.optimal}</p>
+              <p className="complexity-line">
+                Time <code>{explanation.time}</code> · Space <code>{explanation.space}</code>
+              </p>
               <CodeEditor value={problem.solution} readOnly />
             </>
           ) : (
             <button className="button ghost small" onClick={() => setShowSolution(true)}>
-              Reveal solution
+              Reveal solution and explanation
             </button>
           )}
         </div>
