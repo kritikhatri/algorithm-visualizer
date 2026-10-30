@@ -1,9 +1,12 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..activity import record_activity
 from ..content import CARDS, PROBLEMS, PROBLEMS_BY_ID, TOPICS, TOPICS_BY_ID
+from ..content.patterns import PATTERNS, TECHNIQUES
 from ..db import get_db
 from ..models import QuizAttempt, User
 from ..security import optional_user
@@ -75,6 +78,24 @@ def search(q: str = "", limit: int = 5):
             {"id": c["id"], "title": c["front"], "topic": c["topic"]}
             for c in CARDS if matches(c["front"], c["back"])
         ][:limit],
+    }
+
+
+@router.get("/daily")
+def daily_problem():
+    # The same problem for everyone on a given UTC day.
+    problem = PROBLEMS[date.today().toordinal() % len(PROBLEMS)]
+    return {"problem": problem_summary(problem)}
+
+
+@router.get("/patterns")
+def patterns():
+    return {
+        "techniques": TECHNIQUES,
+        "questions": [
+            {"question": question, "answer": answer, "why": why}
+            for question, answer, why in PATTERNS
+        ],
     }
 
 

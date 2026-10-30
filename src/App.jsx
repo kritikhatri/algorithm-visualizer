@@ -13,6 +13,7 @@ import Playground from './pages/Playground'
 import Flashcards from './pages/Flashcards'
 import Race from './pages/Race'
 import CheatSheet from './pages/CheatSheet'
+import Patterns from './pages/Patterns'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/race" element={<Race />} />
           <Route path="/cheatsheet" element={<CheatSheet />} />
+          <Route path="/patterns" element={<Patterns />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

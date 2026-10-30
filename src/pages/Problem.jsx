@@ -7,6 +7,7 @@ import { loadPython, runTests, usePythonStatus } from '../python/runner'
 import CodeEditor from '../components/CodeEditor'
 import Difficulty from '../components/Difficulty'
 import Markdown from '../components/Markdown'
+import InterviewTimer from '../components/InterviewTimer'
 import TestResults from '../components/TestResults'
 import NotFound from './NotFound'
 
@@ -144,6 +145,7 @@ function Workspace({ problem }) {
           <div className="editor-toolbar">
             <span className="muted">solution.py · Python 3</span>
             <div className="toolbar-actions">
+              <InterviewTimer />
               <button className="button ghost small" onClick={handleReset}>Reset</button>
               <button className="button primary small" onClick={handleRun} disabled={running}>
                 {runLabel}

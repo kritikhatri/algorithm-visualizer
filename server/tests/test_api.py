@@ -134,3 +134,9 @@ def test_search(client):
     assert results["topics"][0]["id"] == "heaps"
     assert results["flashcards"]
     assert client.get("/api/search?q=a").json()["topics"] == []
+
+
+def test_daily_and_patterns(client):
+    assert client.get("/api/daily").json()["problem"]["id"]
+    data = client.get("/api/patterns").json()
+    assert all(q["answer"] in data["techniques"] for q in data["questions"])

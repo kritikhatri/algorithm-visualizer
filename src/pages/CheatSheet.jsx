@@ -10,6 +10,7 @@ function CheatSheet() {
         <p className="eyebrow">Quick reference</p>
         <h1>Complexity cheat sheet</h1>
         <p className="subtitle left">The Big-O of every operation covered on this site, in one page.</p>
+        <Link className="button ghost small header-link" to="/patterns">Test yourself: which technique fits? →</Link>
       </header>
       {error && <p className="card error-text">{error.message}</p>}
       <div className="cheat-grid">

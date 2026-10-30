@@ -2252,3 +2252,18 @@ button.cell:hover { border-color: var(--pink); }
 :root[data-theme='light'] .explanation.good { color: #0b6b49; }
 :root[data-theme='light'] .explanation.bad { color: #9f1d1d; }
 :root[data-theme='light'] .badges li.earned strong { color: #9a5b00; }
+
+/* ---------- Daily problem, timer, pattern quiz ---------- */
+
+.daily-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; padding: 18px 24px; }
+.daily-card h2 { margin-top: 2px; font-size: 20px; }
+.daily-card .toolbar-actions { align-items: center; flex-wrap: wrap; }
+.timer { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.timer select { padding: 5px 8px; font-size: 12.5px; }
+.timer.urgent strong { color: var(--red); }
+.header-link { margin-top: 12px; }
+.patterns { margin: 0 auto; }
+.pattern-question { margin: 8px 0 16px; font-size: 20px; line-height: 1.35; }
+.pattern-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.pattern-options .option { justify-content: center; background: none; font-weight: 600; }
+.patterns .quiz-actions { margin-top: 12px; }

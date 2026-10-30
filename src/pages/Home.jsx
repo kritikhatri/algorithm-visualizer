@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useApi } from '../useApi'
+import Difficulty from '../components/Difficulty'
 import HeroDemo from '../components/HeroDemo'
 
 // One wine family, rosé through champagne: each category gets one shade.
@@ -43,6 +44,7 @@ const STEPS = [
 function Home() {
   const { user, progress, openAuth } = useAuth()
   const { data, error } = useApi('/topics')
+  const { data: daily } = useApi('/daily')
   const { data: problemData } = useApi(progress?.attemptedProblems.length ? '/problems' : null)
 
   const topics = data?.topics ?? []
@@ -93,6 +95,21 @@ function Home() {
           </article>
         ))}
       </section>
+
+      {daily && (
+        <section className="card daily-card">
+          <div>
+            <p className="eyebrow">Today's problem</p>
+            <h2>{daily.problem.title}</h2>
+          </div>
+          <div className="toolbar-actions">
+            <Difficulty level={daily.problem.difficulty} />
+            {solved.has(daily.problem.id) && <span className="done-badge">✓ Solved</span>}
+            <Link className="button ghost" to={`/problems/${daily.problem.id}`}>Solve it →</Link>
+            <Link className="button ghost" to="/patterns">Pattern quiz</Link>
+          </div>
+        </section>
+      )}
 
       {user && progress && nextTopic && (
         <section className="card continue-card">
