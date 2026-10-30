@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../auth'
+import SearchBox from './SearchBox'
 
 const links = [
   { to: '/', label: 'Learn', end: true },
@@ -11,7 +13,35 @@ const links = [
   { to: '/dashboard', label: 'Progress' },
 ]
 
+function readTheme() {
+  try {
+    return localStorage.getItem('dsa-theme') === 'light' ? 'light' : 'dark'
+  } catch {
+    return 'dark'
+  }
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme
+  document.documentElement.style.colorScheme = theme
+}
+
+applyTheme(readTheme())
+
 function Navbar() {
+  const [theme, setTheme] = useState(readTheme)
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    applyTheme(next)
+    try {
+      localStorage.setItem('dsa-theme', next)
+    } catch {
+      // The choice just won't persist.
+    }
+  }
+
   const { user, openAuth, signOut } = useAuth()
 
   return (
@@ -31,6 +61,15 @@ function Navbar() {
             </NavLink>
           ))}
         </nav>
+
+        <SearchBox />
+        <button
+          className="button ghost small icon-toggle"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+        >
+          {theme === 'dark' ? '☀' : '☾'}
+        </button>
 
         <div className="nav-auth">
           {user ? (

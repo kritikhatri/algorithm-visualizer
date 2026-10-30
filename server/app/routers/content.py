@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..activity import record_activity
-from ..content import PROBLEMS, PROBLEMS_BY_ID, TOPICS, TOPICS_BY_ID
+from ..content import CARDS, PROBLEMS, PROBLEMS_BY_ID, TOPICS, TOPICS_BY_ID
 from ..db import get_db
 from ..models import QuizAttempt, User
 from ..security import optional_user
@@ -50,6 +50,31 @@ def get_topic(topic_id: str):
                                            "lesson", "complexity", "snippets")},
             "problems": [problem_summary(problem) for problem in topic["problems"]],
         }
+    }
+
+
+@router.get("/search")
+def search(q: str = "", limit: int = 5):
+    term = q.strip().lower()
+    if len(term) < 2:
+        return {"topics": [], "problems": [], "flashcards": []}
+
+    def matches(*fields):
+        return any(term in field.lower() for field in fields)
+
+    return {
+        "topics": [
+            {"id": t["id"], "title": t["title"]}
+            for t in TOPICS if matches(t["title"], t["summary"])
+        ][:limit],
+        "problems": [
+            {"id": p["id"], "title": p["title"]}
+            for p in PROBLEMS if matches(p["title"])
+        ][:limit],
+        "flashcards": [
+            {"id": c["id"], "title": c["front"], "topic": c["topic"]}
+            for c in CARDS if matches(c["front"], c["back"])
+        ][:limit],
     }
 
 

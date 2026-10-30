@@ -127,3 +127,10 @@ def test_activity_updates_streak(client, auth_headers):
     client.put("/api/progress/topics/arrays", headers=auth_headers)
     streak = client.get("/api/progress", headers=auth_headers).json()["streak"]
     assert streak == {"current": 1, "longest": 1, "activeToday": True}
+
+
+def test_search(client):
+    results = client.get("/api/search?q=heap").json()
+    assert results["topics"][0]["id"] == "heaps"
+    assert results["flashcards"]
+    assert client.get("/api/search?q=a").json()["topics"] == []

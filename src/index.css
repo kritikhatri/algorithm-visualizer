@@ -1,4 +1,7 @@
 :root {
+  --ink: 255, 255, 255;
+  --shade: 0, 0, 0;
+  --nav-bg: rgba(24, 6, 13, 0.78);
   --bg: #18060d;
   --surface: rgba(46, 14, 27, 0.72);
   --surface-solid: #260b16;
