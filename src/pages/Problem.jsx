@@ -7,6 +7,7 @@ import { loadPython, runTests, usePythonStatus } from '../python/runner'
 import CodeEditor from '../components/CodeEditor'
 import Difficulty from '../components/Difficulty'
 import Markdown from '../components/Markdown'
+import CodeTracer from '../components/CodeTracer'
 import InterviewTimer from '../components/InterviewTimer'
 import TestResults from '../components/TestResults'
 import NotFound from './NotFound'
@@ -185,6 +186,8 @@ function Workspace({ problem }) {
           </div>
           <CodeEditor value={code} onChange={handleChange} minHeight="320px" />
         </div>
+
+        <CodeTracer code={code} problem={problem} />
 
         {pythonStatus === 'error' && (
           <p className="error-text">Couldn't download Python. Check your internet connection and try again.</p>

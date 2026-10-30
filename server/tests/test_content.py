@@ -92,3 +92,19 @@ def test_every_problem_has_an_explanation():
     from app.content.explanations import EXPLANATIONS
 
     assert set(EXPLANATIONS) == {p["id"] for p in PROBLEMS}
+
+
+def test_trace_records_lines_and_variables():
+    problem = next(p for p in PROBLEMS if p["id"] == "two-sum")
+    trace = json.loads(harness.trace_code(problem["solution"], json.dumps(problem), 0))
+    assert trace["error"] is None
+    assert trace["steps"][0]["line"] == 2
+    assert "index_of" in trace["steps"][2]["vars"]
+    assert trace["steps"][-1]["returned"] == "[0, 1]"
+
+
+def test_trace_stops_runaway_code():
+    problem = next(p for p in PROBLEMS if p["id"] == "two-sum")
+    code = "def two_sum(nums, target):\n    while True:\n        pass\n"
+    trace = json.loads(harness.trace_code(code, json.dumps(problem), 0))
+    assert trace["truncated"] and len(trace["steps"]) == 500

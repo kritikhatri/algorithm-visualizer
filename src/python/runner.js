@@ -83,6 +83,10 @@ export function runTests(code, problem) {
   return run({ type: 'test', code, problem })
 }
 
+export function runTrace(code, problem, testIndex) {
+  return run({ type: 'trace', code, problem, testIndex })
+}
+
 export function runCode(code) {
   return run({ type: 'run', code })
 }

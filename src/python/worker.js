@@ -19,9 +19,11 @@ self.onmessage = async ({ data }) => {
       return
     }
 
-    const fn = pyodide.globals.get(type === 'test' ? 'run_tests' : 'run_code')
-    const output =
-      type === 'test' ? fn(data.code, JSON.stringify(data.problem)) : fn(data.code)
+    const name = { test: 'run_tests', run: 'run_code', trace: 'trace_code' }[type]
+    const fn = pyodide.globals.get(name)
+    const args = type === 'run' ? [data.code] : [data.code, JSON.stringify(data.problem)]
+    if (type === 'trace') args.push(data.testIndex)
+    const output = fn(...args)
     fn.destroy()
     self.postMessage({ id, ok: true, result: JSON.parse(output) })
   } catch (error) {

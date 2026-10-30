@@ -8,6 +8,7 @@ import contextlib
 import copy
 import io
 import json
+import sys
 import traceback
 
 
@@ -187,3 +188,76 @@ def run_code(code):
     except Exception:
         error = short_traceback()
     return json.dumps({"stdout": output.getvalue()[-20_000:], "error": error})
+
+
+MAX_TRACE_STEPS = 500
+
+
+def _show(value):
+    text = repr(value)
+    return text if len(text) <= 120 else text[:117] + "..."
+
+
+def _visible_locals(frame):
+    return {
+        name: _show(value)
+        for name, value in frame.f_locals.items()
+        if not name.startswith("__") and not callable(value)
+    }
+
+
+def trace_code(code, problem_json, test_index):
+    """Run one test case, recording every executed line and the local variables."""
+    problem = json.loads(problem_json)
+    test = problem["tests"][test_index]
+    namespace = {"ListNode": ListNode, "TreeNode": TreeNode, "__name__": "solution"}
+    steps = []
+    truncated = False
+
+    class TooManySteps(Exception):
+        pass
+
+    def tracer(frame, event, arg):
+        nonlocal truncated
+        if frame.f_code.co_filename != "solution.py":
+            return None
+        if event in ("line", "return"):
+            if len(steps) >= MAX_TRACE_STEPS:
+                truncated = True
+                raise TooManySteps()
+            depth = 0
+            caller = frame.f_back
+            while caller is not None:
+                depth += caller.f_code.co_filename == "solution.py"
+                caller = caller.f_back
+            step = {
+                "line": frame.f_lineno,
+                "function": frame.f_code.co_name,
+                "depth": depth,
+                "vars": _visible_locals(frame),
+            }
+            if event == "return":
+                step["returned"] = _show(arg)
+            steps.append(step)
+        return tracer
+
+    output = io.StringIO()
+    result = {"steps": steps, "error": None, "truncated": False}
+    try:
+        with contextlib.redirect_stdout(output):
+            exec(compile(code, "solution.py", "exec"), namespace)
+            target = namespace.get(problem["function"])
+            if target is None:
+                raise NameError(f"Define `{problem['function']}` in your code.")
+            sys.settrace(tracer)
+            try:
+                run_case(target, problem, test)
+            finally:
+                sys.settrace(None)
+    except TooManySteps:
+        pass
+    except Exception:
+        result["error"] = short_traceback()
+    result["truncated"] = truncated
+    result["stdout"] = output.getvalue()[-2000:]
+    return json.dumps(result)
