@@ -108,3 +108,9 @@ def test_trace_stops_runaway_code():
     code = "def two_sum(nums, target):\n    while True:\n        pass\n"
     trace = json.loads(harness.trace_code(code, json.dumps(problem), 0))
     assert trace["truncated"] and len(trace["steps"]) == 500
+
+
+@pytest.mark.parametrize("topic", TOPICS, ids=lambda t: t["id"])
+def test_lessons_have_beginner_sections(topic):
+    for heading in ("The big idea", "Worked example", "Common mistakes", "When to use it"):
+        assert f"## {heading}" in topic["lesson"]

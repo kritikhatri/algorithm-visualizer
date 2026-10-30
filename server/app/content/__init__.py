@@ -22,6 +22,7 @@ from . import (
 )
 from .explanations import EXPLANATIONS
 from .leetcode import LEETCODE_SLUGS
+from .lesson_guides import build_lesson
 
 TOPICS = [
     module.TOPIC
@@ -50,6 +51,7 @@ TOPICS = [
 TOPICS_BY_ID = {topic["id"]: topic for topic in TOPICS}
 
 for topic in TOPICS:
+    topic["lesson"] = build_lesson(topic["id"], topic["lesson"])
     for problem in topic["problems"]:
         problem["topic"] = topic["id"]
         problem["leetcode"] = LEETCODE_SLUGS.get(problem["id"])
