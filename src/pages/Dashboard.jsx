@@ -2,6 +2,23 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useApi } from '../useApi'
 
+const WEAK_SCORE = 0.7
+
+function earnedBadges(progress, topicCount, problemCount) {
+  const solved = progress.solvedProblems.length
+  const completed = progress.completedTopics.length
+  const quizzes = Object.values(progress.quizBest)
+  return [
+    ['First solve', 'Solve a problem', solved >= 1],
+    ['Problem solver', 'Solve 10 problems', solved >= 10],
+    ['Half way', 'Solve half of all problems', solved >= problemCount / 2],
+    ['First topic', 'Complete a topic', completed >= 1],
+    ['Graduate', 'Complete every topic', completed === topicCount],
+    ['Perfect score', 'Ace a quiz', quizzes.some((q) => q.score === q.total)],
+    ['Week streak', 'Study 7 days in a row', progress.streak.longest >= 7],
+  ]
+}
+
 function Dashboard() {
   const { user, progress, openAuth } = useAuth()
   const { data: topicData } = useApi('/topics')
@@ -32,6 +49,19 @@ function Dashboard() {
     const all = problems.filter((p) => p.difficulty === level)
     return { level, total: all.length, solved: all.filter((p) => solved.has(p.id)).length }
   })
+
+  const solvedIn = (topicId) => problems.filter((p) => p.topic === topicId && solved.has(p.id)).length
+  const totalIn = (topicId) => problems.filter((p) => p.topic === topicId).length
+  const weakTopics = topics
+    .filter((t) => {
+      const best = progress.quizBest[t.id]
+      return best && best.score / best.total < WEAK_SCORE
+    })
+    .map((t) => ({
+      ...t,
+      practice: problems.filter((p) => p.topic === t.id && !solved.has(p.id)).slice(0, 2),
+    }))
+  const badges = earnedBadges(progress, topics.length, problems.length)
 
   const percent = Math.round(
     ((completed.size + solved.size) / (topics.length + problems.length)) * 100
@@ -90,6 +120,44 @@ function Dashboard() {
           </section>
         )}
 
+        <section className="card streak-card">
+          <h2 className="card-title">Study streak</h2>
+          <p className="review-due"><strong>{progress.streak.current}</strong> day{progress.streak.current === 1 ? '' : 's'}</p>
+          <p className="muted">
+            Longest: {progress.streak.longest} · {progress.streak.activeToday
+              ? 'You studied today ✓'
+              : 'Solve, quiz or review today to keep it going'}
+          </p>
+        </section>
+
+        <section className="card badges-card">
+          <h2 className="card-title">Badges</h2>
+          <ul className="badges">
+            {badges.map(([name, how, earned]) => (
+              <li key={name} className={earned ? 'earned' : ''} title={how}>
+                <strong>{earned ? '★' : '☆'} {name}</strong>
+                <span className="muted">{how}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {weakTopics.length > 0 && (
+          <section className="card weak-card">
+            <h2 className="card-title">Worth revisiting</h2>
+            {weakTopics.map((t) => (
+              <p key={t.id}>
+                Your best quiz score on <Link to={`/topics/${t.id}`}>{t.title}</Link> is{' '}
+                {progress.quizBest[t.id].score}/{progress.quizBest[t.id].total}.{' '}
+                {t.practice.length > 0 && 'Try: '}
+                {t.practice.map((p, i) => (
+                  <span key={p.id}>{i > 0 && ', '}<Link to={`/problems/${p.id}`}>{p.title}</Link></span>
+                ))}
+              </p>
+            ))}
+          </section>
+        )}
+
         <section className="card topics-progress">
           <h2 className="card-title">Topics</h2>
           <ul className="topic-checklist">
@@ -102,7 +170,7 @@ function Dashboard() {
                   </span>
                   <Link to={`/topics/${topic.id}`}>{topic.title}</Link>
                   <span className="muted">
-                    {best ? `Quiz best ${best.score}/${best.total}` : 'Quiz not taken'}
+                    {solvedIn(topic.id)}/{totalIn(topic.id)} problems · {best ? `quiz ${Math.round((best.score / best.total) * 100)}%` : 'no quiz yet'}
                   </span>
                 </li>
               )

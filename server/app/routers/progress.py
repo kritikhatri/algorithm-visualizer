@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from ..activity import record_activity, user_streaks
 from ..content import PROBLEMS_BY_ID, TOPICS_BY_ID
 from ..db import get_db
 from ..models import ProblemProgress, QuizAttempt, TopicProgress, User, now
@@ -28,6 +29,7 @@ def get_progress(user: User = Depends(current_user), db: Session = Depends(get_d
     ).all()
 
     return {
+        "streak": user_streaks(db, user.id),
         "completedTopics": [row.topic_id for row in topics],
         "solvedProblems": [row.problem_id for row in problems if row.solved_at],
         "attemptedProblems": [row.problem_id for row in problems if not row.solved_at],
@@ -55,6 +57,7 @@ def complete_topic(topic_id: str, user: User = Depends(current_user), db: Sessio
         raise HTTPException(404, "Topic not found.")
     if db.get(TopicProgress, (user.id, topic_id)) is None:
         db.add(TopicProgress(user_id=user.id, topic_id=topic_id))
+        record_activity(db, user.id)
         db.commit()
     return Response(status_code=204)
 
@@ -104,6 +107,7 @@ def save_attempt(
 
     row.code = body.code
     row.attempts += 1
+    record_activity(db, user.id)
     if body.passed and row.solved_at is None:
         row.solved_at = now()
     db.commit()

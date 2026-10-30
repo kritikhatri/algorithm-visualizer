@@ -107,3 +107,23 @@ def test_review_moves_cards_between_boxes(client, auth_headers):
 def test_cheatsheet(client):
     topics = client.get("/api/cheatsheet").json()["topics"]
     assert len(topics) == 18 and topics[0]["complexity"]
+
+
+def test_streak_counts_consecutive_days():
+    from datetime import date
+
+    from app.activity import streaks
+
+    days = [date(2026, 1, 1), date(2026, 1, 2), date(2026, 1, 5), date(2026, 1, 6), date(2026, 1, 7)]
+    assert streaks(days, date(2026, 1, 7)) == {"current": 3, "longest": 3, "activeToday": True}
+    assert streaks(days, date(2026, 1, 8))["current"] == 3
+    assert streaks(days, date(2026, 1, 9))["current"] == 0
+    assert streaks([], date(2026, 1, 9)) == {"current": 0, "longest": 0, "activeToday": False}
+
+
+def test_activity_updates_streak(client, auth_headers):
+    assert client.get("/api/progress", headers=auth_headers).json()["streak"]["current"] == 0
+    client.post("/api/review/heaps:0", json={"correct": True}, headers=auth_headers)
+    client.put("/api/progress/topics/arrays", headers=auth_headers)
+    streak = client.get("/api/progress", headers=auth_headers).json()["streak"]
+    assert streak == {"current": 1, "longest": 1, "activeToday": True}

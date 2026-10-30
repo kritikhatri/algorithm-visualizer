@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from ..activity import record_activity
 from ..content import CARDS, CARDS_BY_ID, TOPICS_BY_ID
 from ..db import get_db
 from ..models import FlashcardProgress, User, now
@@ -94,5 +95,6 @@ def answer_card(
     row.box = min(row.box + 1, MAX_BOX) if body.correct else 1
     row.reviewed_at = now()
     row.due_at = row.reviewed_at + timedelta(days=INTERVAL_DAYS[row.box])
+    record_activity(db, user.id)
     db.commit()
     return {"box": row.box, "dueAt": row.due_at.isoformat()}

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from ..activity import record_activity
 from ..content import PROBLEMS, PROBLEMS_BY_ID, TOPICS, TOPICS_BY_ID
 from ..db import get_db
 from ..models import QuizAttempt, User
@@ -113,6 +114,7 @@ def submit_quiz(
 
     if user is not None:
         db.add(QuizAttempt(user_id=user.id, topic_id=topic_id, score=score, total=len(quiz)))
+        record_activity(db, user.id)
         db.commit()
 
     return {"score": score, "total": len(quiz), "results": results}
